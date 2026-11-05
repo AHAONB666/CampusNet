@@ -1,0 +1,29 @@
+# 敏感数据——绝不能提交
+config.json
+ui.json
+campusnet.log
+guide.skip
+
+# 主程序二进制——走 GitHub Release 发布，不进仓库
+CampusNet.exe
+
+# 运行时产物
+*.log
+__pycache__/
+*.pyc
+build/
+_build/
+dist/
+*.spec
+
+# 系统文件
+Thumbs.db
+Desktop.ini
+
+# 敏感/二进制兜底（防后续误提交）
+*.exe
+*.bak
+*.key
+*.pem
+id_rsa
+.env
