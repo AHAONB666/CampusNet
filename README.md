@@ -1,5 +1,10 @@
 # CampusNet 校园网自动认证
 
+[![Release](https://img.shields.io/github/v/release/AHAONB666/CampusNet?label=%E4%B8%8B%E8%BD%BD&color=2ea44f)](https://github.com/AHAONB666/CampusNet/releases/latest)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Platform](https://img.shields.io/badge/platform-Windows%2010%20%7C%2011-0078d4)](https://github.com/AHAONB666/CampusNet/releases/latest)
+[![Python](https://img.shields.io/badge/python-3.8-3776ab)](https://www.python.org/)
+
 一个 Windows 桌面端的校园网 Portal 自动认证工具：断网自动重连、开机静默守护、支持多学校配置，带浅色/深色/跟随系统三种主题与内置新手引导。
 
 ![icon](assets/icon.png)
