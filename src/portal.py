@@ -323,7 +323,10 @@ def login(cfg, bind_ip=None):
     if not purl:
         purl = netutil.detect_portal_url(bind_ip=ip) or ''
     if not purl:
-        return False, '未探测到认证页（请在设置里填写认证页地址）'
+        # 旧文案「请在设置里填写认证页地址」会把网络/Portal 偶发异常误报成
+        # 配置缺失，误导用户去改配置。真实原因是没配地址且自动探测也没成功。
+        return False, ('认证页自动探测失败：可能未连上校园网或 Portal 服务器暂未响应，'
+                       '将自动重试；若持续失败，可在设置里手动填写认证页地址')
     auth_type = (cfg.get('auth_type') or 'auto').lower()
     if auth_type == 'eportal' or '/eportal/' in purl.lower():
         try:

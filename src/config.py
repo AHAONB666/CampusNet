@@ -22,11 +22,13 @@
 ``save(cfg)`` 把顶层里的 profile 字段写回当前 active profile、其余写全局。
 这样 guard.py / ui_scifi.py 等既有调用方无需改动。
 
-密码存储：
+凭据存储（密码与账号同样处理）：
 * 新格式 ``dpapi:<base64>`` —— 用 crypt32 的 CryptProtectData 加密，
-  只能被同一 Windows 用户在同一台机器上解密；
+  只能被同一 Windows 用户在同一台机器上解密；账号（手机号/学号）在 v2.4.1
+  起同样加密落盘，避免明文账号暴露在 config.json；
 * 旧格式（``_pwd_enc: true`` 的 XOR+base64）仅用于读取，读到后静默迁移为 DPAPI；
-* 明文 —— 直接可用（DPAPI 极少数不可用环境下的降级形态）。
+* 明文 —— 直接可用且向后兼容：历史明文账号/密码读到后原样使用，
+  下一次 ``save()`` 时自动加密落盘（DPAPI 极少数不可用环境下降级明文）。
 """
 import base64
 import ctypes
@@ -36,7 +38,7 @@ import sys
 import threading
 
 APP_NAME = 'CampusNet'
-APP_VERSION = '2.4.0'
+APP_VERSION = '2.4.1'
 _KEY = b'campusnet-legacy-xor-v1'
 PWD_PREFIX = 'dpapi:'
 CRYPTPROTECT_UI_FORBIDDEN = 1
@@ -312,6 +314,35 @@ def _encode_pwd(plain):
     return plain
 
 
+def _decode_user(value):
+    """把磁盘上的账号字段解成明文（支持 dpapi / 明文；解不开返回 ""）。
+
+    与密码共用 ``dpapi:`` 前缀：解密只看前缀，不区分字段语义，因此对账号
+    同样适用。历史明文账号（手机号/学号）不以该前缀开头，直接原样返回，
+    保证旧配置零改动可读。
+    """
+    if not value:
+        return ''
+    if value.startswith(PWD_PREFIX):
+        plain = dpapi_decrypt(value)
+        if plain is None:
+            log('已保存的账号无法解密，该学校需要重新填写账号')
+            return ''
+        return plain
+    return value
+
+
+def _encode_user(plain):
+    """把明文账号加密成可落盘的字符串（DPAPI 失败时降级明文并写日志）"""
+    if not plain:
+        return ''
+    token = dpapi_encrypt(plain)
+    if token:
+        return token
+    log('⚠ DPAPI 加密不可用，账号将以明文保存在 config.json 中')
+    return plain
+
+
 def _fill_profile(src, index):
     """把磁盘上的单个 profile 补齐成内存态（密码为明文）
 
@@ -323,7 +354,7 @@ def _fill_profile(src, index):
         'id': str(src.get('id') or '').strip() or 'school%d' % (index + 1),
         'name': str(src.get('name') or '').strip(),
         'ssid': str(src.get('ssid') or '').strip(),
-        'username': str(src.get('username') or '').strip(),
+        'username': _decode_user(str(src.get('username') or '')),
         'password': _decode_pwd(str(src.get('password') or '')),
         'portal_url': str(src.get('portal_url') or '').strip(),
         'user_field': str(src.get('user_field') or '').strip(),
@@ -391,8 +422,8 @@ def _normalize(raw):
     prof['ssid'] = ssid or _DEFAULT_PROFILE['ssid']
     prof['name'] = ssid or _DEFAULT_PROFILE['name']
     prof['id'] = _slug(ssid, _DEFAULT_PROFILE['id'])
-    for key in ('username', 'portal_url', 'user_field', 'pwd_field',
-                'extra_params'):
+    prof['username'] = _decode_user(str(raw.get('username') or '').strip())
+    for key in ('portal_url', 'user_field', 'pwd_field', 'extra_params'):
         prof[key] = str(raw.get(key) or '').strip()
     pwd = str(raw.get('password') or '')
     if legacy_xor and pwd:
@@ -422,7 +453,7 @@ def _write(store):
             'id': prof.get('id') or 'school',
             'name': prof.get('name') or '',
             'ssid': prof.get('ssid') or '',
-            'username': prof.get('username') or '',
+            'username': _encode_user(prof.get('username') or ''),
             'password': _encode_pwd(prof.get('password') or ''),
             'portal_url': prof.get('portal_url') or '',
             'user_field': prof.get('user_field') or '',
