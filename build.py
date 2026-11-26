@@ -110,9 +110,23 @@ def report(version):
     print('  大小   : %d 字节 (%.2f MB)' % (size, size / 1048576.0))
     print('  SHA256 : %s' % sha)
     print('=' * 56)
-    print('  下一步 : git tag v%s && git push origin v%s' % (version, version))
-    print('           然后在 GitHub 建 Release，上传上面这个 exe')
     return sha
+
+
+def deploy():
+    """把构建产物同步到项目根目录。
+
+    程序把 config.json 存在 exe 同目录，因此根目录必须保有一份可运行的 exe，
+    否则 launcher 与日常双击会失去配置。dist/ 作为发布归档保留。
+    """
+    src = os.path.join(DIST, 'CampusNet.exe')
+    dst = os.path.join(ROOT, 'CampusNet.exe')
+    try:
+        shutil.copy2(src, dst)
+        print('[部署] 已同步到根目录: %s' % dst)
+    except PermissionError:
+        print('[提示] 根目录 CampusNet.exe 正在运行，已跳过覆盖')
+        print('       退出程序后重新执行 build.py 即可完成同步')
 
 
 def main():
@@ -124,6 +138,10 @@ def main():
     clean()
     build()
     report(version)
+    deploy()
+    print('')
+    print('  发布 : 上传 dist/CampusNet.exe 到 GitHub Release')
+    print('  运行 : 双击根目录 CampusNet.exe，或 launcher/启动CampusNet.vbs')
 
 
 if __name__ == '__main__':
