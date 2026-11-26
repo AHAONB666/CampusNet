@@ -27,19 +27,20 @@ import config
 import guard as guard_mod
 import netutil
 import portal
+import ui_theme
 import win11fx
 
 
 # ---------------------------------------------------------------- 版式
-# B · 编辑排版：无卡片，靠字号与头发线建立层级
+# iOS 风格：4pt 栅格 + 分组卡片 + 克制的字阶
 W, H = 860, 580
-PAD = 48
-PADT = 38
-PADB = 38
-NAV_H = 30
+PAD = 40          # 页面左右留白
+PADT = 34         # 顶部留白
+PADB = 34         # 底部留白
+NAV_H = 32
 LEFT, RIGHT = PAD, W - PAD
 CX = W // 2
-ROW_H = 44
+ROW_H = 44        # iOS 列表行标准 44pt，与分组间距配合刚好铺满一屏
 
 UI = "Noto Sans SC"
 NUM = "Segoe UI Variable Display"
@@ -64,41 +65,11 @@ def _ensure_fonts(root=None):
 
 
 # ---------------------------------------------------------------- 主题令牌
-LIGHT = dict(
-    name="浅色",
-    bg="#FAFAF8", card="#FFFFFF", bar="#FAFAF8",
-    text="#14140F", text2="#62625A", text3="#72726A",
-    line="#E4E4DC", line2="#D8D8D0", div="#E4E4DC", card_line="#E4E4DC",
-    line_strong="#14140F",
-    ink="#14140F",
-    accent="#14140F", acc_soft="#EDEDE8", on_accent="#FAFAF8",
-    ok="#2F7D32", warn="#B26A00", err="#B3261E", err_soft="#F7E8E6",
-    neu_soft="#F0F0EB", neu_sol="#D8D8D0", neu_gly="#8C8C84",
-    divider_stat="#E4E4DC", chevron="#8C8C84", seg_bg="#EFEFEA",
-    btn="#14140F", btn_fg="#FAFAF8",
-    btn2="#F0F0EC", btn2_fg="#14140F",
-    hover="#EDEDE8",
-    sw_on="#14140F", sw_off="#D8D8D0", knob="#FAFAF8",
-    track="#9C9C90",
-)
-DARK = dict(
-    name="深色",
-    bg="#111110", card="#1A1A18", bar="#111110",
-    text="#F5F5F0", text2="#A0A099", text3="#8C8C84",
-    line="#2A2A26", line2="#3A3A35", div="#2A2A26", card_line="#2A2A26",
-    line_strong="#F5F5F0",
-    ink="#F5F5F0",
-    accent="#F5F5F0", acc_soft="#1E1E1B", on_accent="#111110",
-    ok="#6BCB77", warn="#E0A458", err="#FF6B6B", err_soft="#2C1E1D",
-    neu_soft="#1E1E1B", neu_sol="#3A3A35", neu_gly="#8C8C84",
-    divider_stat="#2A2A26", chevron="#8A8A82", seg_bg="#1E1E1B",
-    btn="#F5F5F0", btn_fg="#111110",
-    btn2="#1E1E1C", btn2_fg="#F5F5F0",
-    hover="#1C1C1A",
-    sw_on="#F5F5F0", sw_off="#3A3A36", knob="#111110",
-    track="#6E6E68",
-)
-PALETTES = {"light": LIGHT, "dark": DARK}
+# 颜色全部来自 ui_theme（iOS 系统色），此处不再维护第二份色板。
+# 保留 LIGHT / DARK / PALETTES 这三个名字，绘制代码无需改动就能吃到新配色。
+LIGHT = ui_theme.LIGHT
+DARK = ui_theme.DARK
+PALETTES = ui_theme.PALETTES
 
 
 # ---------------------------------------------------------------- 新手引导文案
@@ -374,18 +345,18 @@ class QuietUI(object):
     #   acc  cubic-bezier(.7,0,1,.5)    200ms  退出
     @staticmethod
     def _ease(name, t):
+        """缓动统一走 ui_theme，保证转场/弹层/开关使用同一套物理感受。"""
         if t <= 0.0:
             return 0.0
         if t >= 1.0:
             return 1.0
         if name == "std":
-            return t * t * (3.0 - 2.0 * t)
+            return ui_theme.ios_ease_standard(t)
         if name == "acc":
-            return t ** 2.2
+            return ui_theme.ios_ease_accelerate(t)
         if name == "spring":
-            u = t - 1.0
-            return 1.0 + 2.70158 * u * u * u + 1.70158 * u * u
-        return 1.0 - (1.0 - t) ** 3
+            return ui_theme.spring_value(t)
+        return ui_theme.ios_ease_decelerate(t)
 
     @staticmethod
     def _mix(c1, c2, p):
@@ -608,19 +579,18 @@ class QuietUI(object):
                            joinstyle="round", tags=tags)
 
     def _switch(self, x2, cy, on, tags=()):
+        """iOS 开关：44×26 胶囊轨道 + 22pt 白色圆钮（左右各留 2pt 内边距）。"""
         c, P = self.c, self.P
-        x1 = x2 - 34
-        y1 = cy - 9
-        if on:
-            _rr(c, x1, y1, x2, y1 + 18, 9, fill=P["sw_on"], outline="",
-                tags=tags)
-        else:
-            _rr(c, x1, y1, x2, y1 + 18, 9, fill=P["bg"], outline=P["line2"],
-                width=1, tags=tags)
-        kx = x2 - 9 if on else x1 + 9
-        c.create_oval(kx - 7, cy - 7, kx + 7, cy + 7,
-                      fill=(P["knob"] if on else P["chevron"]),
-                      outline="", tags=tags)
+        sw, sh = 40, 24
+        x1 = x2 - sw
+        y1 = cy - sh / 2.0
+        track = P["sw_on"] if on else P["sw_off"]
+        _rr(c, x1, y1, x2, y1 + sh, sh / 2.0, fill=track, outline="", tags=tags)
+        pad = 2.0
+        r = sh / 2.0 - pad
+        kx = (x2 - pad - r) if on else (x1 + pad + r)
+        c.create_oval(kx - r, cy - r, kx + r, cy + r,
+                      fill=P["knob"], outline="", tags=tags)
 
     def _wifi(self, c, cx, cy, r, color, w=1.6, tags=()):
         for i, k in enumerate((1.0, 0.66, 0.32)):
@@ -641,7 +611,7 @@ class QuietUI(object):
         items = (("home", "主页"), ("me", "我的"), ("settings", "设置"))
         x = self.R - ctl_w - 18
         for key, label in reversed(items):
-            w = self._tw(label, 12.5)
+            w = self._tw(label, 13.5)
             x -= w
             active = (self.view == key)
             tag = "nav_" + key
@@ -649,10 +619,11 @@ class QuietUI(object):
             self._focusable(tag, (x - 8, y - 10, x + w + 8, y + 24))
             c.create_text(x, y + 8, text=label, anchor="w",
                           fill=(P["text"] if active else P["text2"]),
-                          font=_f(UI, 12.5), tags=(tag, "fx"))
+                          font=_f(UI, 13.5), tags=(tag, "fx"))
             if active:
-                c.create_line(x, y + 17, x + w, y + 17, fill=P["text"],
-                              width=1.5, tags=(tag, "fx"))
+                # iOS 分段选中：更短更粗的指示线
+                c.create_line(x, y + 18, x + w, y + 18, fill=P["accent"],
+                              width=2, capstyle="round", tags=(tag, "fx"))
             x -= 26
         self._win_controls(y, ctl_w)
         c.create_line(PAD, y + NAV_H, self.R, y + NAV_H, fill=P["line_strong"],
@@ -741,15 +712,15 @@ class QuietUI(object):
                       tags=("fx",))
         self._tracked(c, PAD + 16, y + 5.5, tag, 12, dot, 0.96, tags=("fx",))
 
-        # 大标题
+        # 大标题（iOS Large Title 34pt）
         y += 17 + 16
-        self.big_item = c.create_text(PAD, y + 26, text=title, anchor="w",
-                                      fill=P["text"], font=_f(UI, 46),
+        self.big_item = c.create_text(PAD, y + 22, text=title, anchor="w",
+                                      fill=P["text"], font=_f(UI, 34),
                                       tags=("fx",))
         # meta
-        y += 52 + 14
+        y += 44 + 14
         self.sub_item = c.create_text(PAD, y, text=meta, anchor="nw",
-                                      fill=P["text2"], font=_f(UI, 12.5),
+                                      fill=P["text2"], font=_f(UI, 13),
                                       tags=("fx",))
         if kind == "error":
             ay = y + 42
@@ -796,10 +767,10 @@ class QuietUI(object):
             bfill, bfg = P["btn"], P["btn_fg"]
             blabel = {"idle": "连接", "noconfig": "去填写",
                       "error": "重新连接", "online": "重新检测"}[kind]
-        _rr(c, PAD, by, PAD + 148, by + 44, 2, fill=bfill, outline="",
-            tags=("btn", "fx"))
+        _rr(c, PAD, by, PAD + 148, by + 44, ui_theme.RADIUS['btn'],
+            fill=bfill, outline="", tags=("btn", "fx"))
         c.create_text(PAD + 74, by + 22, text=blabel, fill=bfg,
-                      font=_f(UI, 13), tags=("btn", "fx"))
+                      font=_f(UI, 15), tags=("btn", "fx"))
         self._focusable("btn", (PAD, by, PAD + 148, by + 44))
         log_label = "查看完整日志  →"
         log_w = self._tw(log_label, 12.5)
@@ -812,8 +783,8 @@ class QuietUI(object):
         self._hit(self.R - 214, by + 2, self.R, by + 42, "tg2")
         self._focusable("tg2", (self.R - 214, by + 2, self.R, by + 42))
         self._switch(self.R, by + 22, self._rec_on, ("tg2", "fx"))
-        c.create_text(self.R - 46, by + 22, text="自动重连", anchor="e",
-                      fill=P["text2"], font=_f(UI, 12), tags=("tg2", "fx"))
+        c.create_text(self.R - 52, by + 22, text="自动重连", anchor="e",
+                      fill=P["text2"], font=_f(UI, 12.5), tags=("tg2", "fx"))
 
     def _data_row(self, top, cols):
         c, P = self.c, self.P
@@ -822,16 +793,18 @@ class QuietUI(object):
         for i, (key, lab, val, sub, vsize) in enumerate(cols):
             x = PAD + i * cw + (0 if i == 0 else 26)
             if i:
-                c.create_line(PAD + i * cw, top + 4, PAD + i * cw, top + 82,
+                # iOS 分隔线：淡、短、与内容对齐
+                c.create_line(PAD + i * cw, top + 8, PAD + i * cw, top + 76,
                               fill=P["line"], width=1, tags=("fx",))
-            self._tracked(c, x, top + 6, lab, 10.5, P["text3"], 1.05,
+            self._tracked(c, x, top + 6, lab, 11, P["text3"], 0.6,
                           tags=("fx",))
             it = c.create_text(x, top + 40, text=val, anchor="w", fill=P["text"],
-                               font=_f(NUM, vsize), tags=("fx",))
+                               font=_f(NUM, max(24, vsize - 6)),
+                               tags=("fx",))
             if key:
                 setattr(self, "v_" + key, it)
-            c.create_text(x, top + 74, text=sub, anchor="w", fill=P["text3"],
-                          font=_f(UI, 10.5), tags=("fx",))
+            c.create_text(x, top + 72, text=sub, anchor="w", fill=P["text3"],
+                          font=_f(UI, 11), tags=("fx",))
 
     # ---------- 我的 ----------
     def _build_me(self):
@@ -900,8 +873,9 @@ class QuietUI(object):
         if rule:
             c.create_line(PAD, y, self.R, y, fill=P["line"], width=1,
                           tags=("fx",))
-            y += 24
-        self._tracked(c, PAD, y + 5, text, 10.5, P["text3"], 1.05,
+            y += 23
+        # iOS 分组标题：小号、加字距、弱化颜色
+        self._tracked(c, PAD, y + 5, text, 11, P["text3"], 0.9,
                       tags=("fx",))
         return y + 10 + 8
 
@@ -912,10 +886,12 @@ class QuietUI(object):
         self._hit(PAD, y, self.R, y + ROW_H, tag)
         self._focusable(tag, (PAD, y, self.R, y + ROW_H))
         c.create_text(PAD, cy, text=label, anchor="w", fill=P["text"],
-                      font=_f(UI, 13), tags=(tag, "fx"))
+                      font=_f(UI, 15), tags=(tag, "fx"))
         if value:
-            c.create_text(self.R - (22 if arrow else 0), cy, text=value,
-                          anchor="e", fill=P["text2"], font=_f(UI, 12.5),
+            # 右侧有开关/箭头时给值留出避让距离，避免与控件叠加
+            reserve = 52 if switch else (22 if arrow else 0)
+            c.create_text(self.R - reserve, cy, text=value,
+                          anchor="e", fill=P["text2"], font=_f(UI, 13),
                           tags=(tag, "fx"))
         if arrow:
             self._chev(self.R - 6, cy, P["chevron"], (tag, "fx"))

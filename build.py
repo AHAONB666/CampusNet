@@ -29,7 +29,7 @@ ICON = os.path.join(ASSETS, 'icon.ico')
 DIST = os.path.join(ROOT, 'dist')
 WORK = os.path.join(ROOT, '_build', 'work')
 
-HIDDEN_IMPORTS = ['ui_quiet', 'psutil', 'tray']
+HIDDEN_IMPORTS = ['ui_quiet', 'ui_theme', 'psutil', 'tray']
 
 
 def read_version():
