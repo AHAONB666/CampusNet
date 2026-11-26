@@ -7,14 +7,18 @@ guide.skip
 # 主程序二进制——走 GitHub Release 发布，不进仓库
 CampusNet.exe
 
+# 构建产物目录（build.py 输出到这里，唯一出口）
+dist/
+
 # 运行时产物
 *.log
+*.log.old
+*.log.*
 __pycache__/
 *.pyc
 build/
 _build/
-dist/
-*.spec
+_build/*.spec
 
 # 系统文件
 Thumbs.db
