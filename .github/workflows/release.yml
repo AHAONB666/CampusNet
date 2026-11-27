@@ -1,0 +1,81 @@
+name: 构建并发布
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: 打包 Windows 程序
+    runs-on: windows-latest
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 安装 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.8"
+
+      - name: 安装打包依赖
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install "pyinstaller==6.22.3" "pillow==10.4.0"
+
+      - name: 打包单文件 exe
+        working-directory: ui-ios
+        run: |
+          python -m PyInstaller --noconfirm --clean --onefile --windowed `
+            --name CampusNetIOS `
+            --icon app.ico `
+            --add-data "index.html;." `
+            --add-data "app.ico;." `
+            app.py
+
+      - name: 重命名为应用名
+        run: |
+          Move-Item -LiteralPath "ui-ios/dist/CampusNetIOS.exe" `
+                    -Destination "ui-ios/dist/懒得连校园网.exe" -Force
+          Get-ChildItem "ui-ios/dist" | Format-Table Name, Length
+
+      - name: 上传构建产物
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-exe
+          path: ui-ios/dist/*.exe
+          if-no-files-found: error
+
+      - name: 发布 Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          name: 懒得连校园网 ${{ github.ref_name }}
+          files: ui-ios/dist/*.exe
+          fail_on_unmatched_files: true
+          body: |
+            ## 下载
+
+            `懒得连校园网.exe` —— 单文件绿色版，双击即用，无需安装、无需 Python 环境。
+
+            ## 这一版有什么
+
+            - **全新的 iOS 风格界面**：主页 / 我的 / 设置三页，毛玻璃状态卡、单列移动布局
+            - **手机竖屏窗口**：默认 420×860 屏幕居中，屏幕矮时自动收高
+            - **托盘常驻**：关掉窗口程序仍在右下角托盘，右键可显示主界面 / 退出
+            - **单实例**：已在运行时不重复开窗，只会把原窗口调到前台
+            - **真实状态机**：五态（未连接 / 连接中 / 已连接 / 认证失败 / 已暂停）、
+              分段重试倒计时、失败分账（凭据 / 服务 / 网络）
+            - **保留原程序全部能力**：多学校配置、学号密码本地加密存储、检测间隔、
+              开机自启、最小化到托盘、主题三档、运行日志
+
+            ## 说明
+
+            - 界面层是本地状态机演示；接真实 Portal 认证需把 `eportal.py` 的结果回调接到 `settle()`，UI 层不用动
+            - 检测间隔下限为 10 秒（更短会触发 Portal 限流甚至锁号）
+            - 源码与设计规范见 `ui-ios/` 目录

@@ -19,7 +19,7 @@ import time
 import subprocess
 
 APP_NAME = "懒得连校园网"
-HTML_NAME = "CampusNet-iOS.html"
+HTML_NAME = "index.html"
 
 # 手机竖屏比例：420 × 860（约 1:2.05，比 iPhone 15 的 1:2.17 略宽，
 # 让状态卡的 2×2 数据块在 390–420 之间不至于太挤）。

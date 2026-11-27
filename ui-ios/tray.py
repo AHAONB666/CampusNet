@@ -89,7 +89,7 @@ def asset_path(name):
 class Tray(object):
 
     def __init__(self, on_show=None, on_quit=None, title="懒得连校园网",
-                 icon_name="图标.ico"):
+                 icon_name="app.ico"):
         self.on_show = on_show or (lambda: None)
         self.on_quit = on_quit or (lambda: None)
         self.title = title
