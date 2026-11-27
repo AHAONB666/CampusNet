@@ -9,6 +9,14 @@
 
 ![icon](assets/icon.png)
 
+## 新界面（iOS 风格）
+
+[`ui-ios/`](ui-ios/) 下是一版用 iOS 设计语言重做的界面：单文件纯前端 + 一层极薄的桌面启动器（不用 Electron，整包约 6 MB）。手机竖屏窗口、毛玻璃状态卡、可打断的弹性动效，功能与原版一致。
+
+- 直接看：双击 [`ui-ios/index.html`](ui-ios/index.html)
+- 打包成 exe、接入真实认证：见 [`ui-ios/README.md`](ui-ios/README.md)
+- 设计文档：[视觉规范](ui-ios/design/visual-spec.md) · [体验与动效规范](ui-ios/design/motion-spec.md)
+
 ## 功能
 
 - **自动认证**：检测网络断开（`generate_204` 探测，绑定 WLAN 网卡 IP，绕过 VPN/TUN 干扰）后自动发起 Portal 认证

@@ -1,0 +1,3343 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>懒得连校园网</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='15' fill='%230A6CFF'/%3E%3Ccircle cx='32' cy='32' r='17' fill='none' stroke='%23FFFFFF' stroke-width='5' stroke-linecap='round' stroke-dasharray='82 200' transform='rotate(-90 32 32)'/%3E%3Ccircle cx='32' cy='32' r='4.5' fill='%23FFFFFF'/%3E%3C/svg%3E">
+<style>
+/* ============================================================
+   0. 令牌 —— 视觉规范 §1 / §2 / §3
+   ============================================================ */
+:root{
+  --c-canvas:#F2F2F7;
+  --c-sidebar:rgba(255,255,255,.72);
+  --c-card:#FFFFFF;
+  --c-card-inset:#F7F7FA;
+  --c-card-subtle:#FAFAFC;
+  --c-glass:rgba(255,255,255,.62);
+  --c-glass-border:rgba(16,16,20,.06);
+  --c-glass-highlight:rgba(255,255,255,.72);
+  --c-sep:rgba(60,60,67,.18);
+  --c-sep-strong:rgba(60,60,67,.29);
+  --c-fill:rgba(120,120,128,.12);
+  --c-fill-strong:rgba(120,120,128,.20);
+
+  --t-1:#101014;
+  --t-2:#5C5C66;
+  --t-3:#757580;
+  --t-4:#B8B8C2;
+  --i-faint:#8E8E99;
+  --t-bar:#6A6A75;
+
+  --a-fill:#0A6CFF;
+  --a-fill-press:#0057D2;
+  --a-text:#0A6CFF;
+  --a-soft:rgba(10,108,255,.12);
+
+  --s-ok:#34C759;
+  --s-busy:#0A6CFF;
+  --s-danger:#FF3B30;
+  --s-danger-ink:#C0231A;
+  --s-warn:#FF9500;
+  --s-warn-ink:#B25A00;
+  --s-idle:#8E8E93;
+  --s-warn-fill:rgba(255,149,0,.14);
+
+  --glow-b1:rgba(10,108,255,.13);
+  --glow-b2:rgba(10,108,255,.18);
+  --glow-b3:rgba(10,108,255,.22);
+
+  --c-frozen:rgba(255,255,255,.94);
+  --c-toast:#FFFFFF;
+  --c-scrim:rgba(16,16,20,.28);
+  --c-skel:rgba(120,120,128,.12);
+  --c-skel-hi:rgba(255,255,255,.35);
+
+  --r-xs:6px; --r-sm:10px; --r-md:12px; --r-lg:16px; --r-xl:20px; --r-pill:999px;
+
+  --d-xxs:80ms; --d-xs:120ms; --d-sm:160ms; --d-md:220ms; --d-lg:320ms; --d-xl:420ms; --d-sheet:340ms;
+
+  --ease-enter:cubic-bezier(.16,1,.30,1);
+  --ease-exit:cubic-bezier(.70,0,.84,0);
+  --ease-state:cubic-bezier(.32,.72,0,1);
+  --ease-press:cubic-bezier(.40,0,.20,1);
+  --ease-loop:linear;
+
+  --font-ui:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI Variable Text","Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei UI",sans-serif;
+  --font-mono:ui-monospace,"SF Mono","Cascadia Mono","Segoe UI Mono",Menlo,Consolas,monospace;
+
+  --sh-l1:0 1px 2px rgba(16,16,20,.04),0 8px 24px -10px rgba(16,16,20,.08);
+  --sh-l2:0 1px 0 rgba(255,255,255,.72) inset,0 12px 32px -16px rgba(16,16,20,.14);
+  --sh-l3:0 2px 6px rgba(16,16,20,.05),0 24px 48px -18px rgba(16,16,20,.16);
+
+  --glass-blur:blur(20px) saturate(170%);
+  --bar-blur:blur(28px) saturate(190%);
+  --toast-blur:blur(16px) saturate(160%);
+
+  --ring-size:128px;
+  --sidebar-w:264px;
+  --content-max:760px;
+}
+[data-theme="dark"]{
+  --c-canvas:#06060A;
+  --c-sidebar:rgba(22,22,28,.66);
+  --c-card:#14141A;
+  --c-card-inset:#0E0E13;
+  --c-card-subtle:#101015;
+  --c-glass:rgba(26,26,32,.58);
+  --c-glass-border:rgba(255,255,255,.10);
+  --c-glass-highlight:rgba(255,255,255,.10);
+  --c-sep:rgba(255,255,255,.10);
+  --c-sep-strong:rgba(255,255,255,.18);
+  --c-fill:rgba(120,120,128,.22);
+  --c-fill-strong:rgba(120,120,128,.34);
+
+  --t-1:#F5F5F7;
+  --t-2:#A0A0AB;
+  --t-3:#82828C;
+  --t-4:#48484F;
+  --i-faint:#6C6C76;
+  --t-bar:#9C9CA6;
+
+  --a-fill:#1668FF;
+  --a-fill-press:#0A56D6;
+  --a-text:#5CA0FF;
+  --a-soft:rgba(92,160,255,.18);
+
+  --s-ok:#30D158;
+  --s-busy:#5CA0FF;
+  --s-danger:#FF6961;
+  --s-danger-ink:#FF6961;
+  --s-warn:#FFB340;
+  --s-warn-ink:#FFB340;
+  --s-idle:#7C7C85;
+  --s-warn-fill:rgba(255,179,64,.18);
+
+  --glow-b1:rgba(92,160,255,.15);
+  --glow-b2:rgba(92,160,255,.21);
+  --glow-b3:rgba(92,160,255,.26);
+
+  --c-frozen:rgba(26,26,32,.94);
+  --c-toast:#1C1C22;
+  --c-scrim:rgba(0,0,0,.52);
+  --c-skel:rgba(120,120,128,.22);
+  --c-skel-hi:rgba(255,255,255,.06);
+
+  --sh-l1:0 1px 0 rgba(255,255,255,.03) inset,0 10px 24px -14px rgba(0,0,0,.70);
+  --sh-l2:0 1px 0 rgba(255,255,255,.10) inset,0 12px 32px -16px rgba(0,0,0,.80);
+  --sh-l3:0 1px 0 rgba(255,255,255,.08) inset,0 24px 56px -20px rgba(0,0,0,.90);
+
+  --bar-blur:blur(28px) saturate(160%);
+  --glass-blur:blur(20px) saturate(155%);
+  --toast-blur:blur(16px) saturate(150%);
+}
+
+/* ============================================================
+   1. 基础
+   ============================================================ */
+*,*::before,*::after{box-sizing:border-box;}
+[hidden]{display:none !important;}
+html,body{height:100%;}
+body{
+  margin:0;
+  font-family:var(--font-ui);
+  font-size:17px;
+  line-height:24px;
+  color:var(--t-1);
+  background:var(--c-canvas);
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  overflow:hidden;
+}
+button{font:inherit;color:inherit;}
+input{font:inherit;color:inherit;}
+h1,h2,h3,p{margin:0;}
+.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums;letter-spacing:0;}
+.sr-only{
+  position:absolute;width:1px;height:1px;margin:-1px;padding:0;
+  overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;
+}
+.icon-defs{position:absolute;width:0;height:0;overflow:hidden;}
+.ic{display:block;flex:0 0 auto;}
+.ic-14{width:14px;height:14px;}
+.ic-20{width:20px;height:20px;}
+.ic-28{width:28px;height:28px;}
+
+:focus-visible{outline:none;}
+button:focus-visible,
+input:focus-visible,
+[tabindex]:focus-visible{
+  box-shadow:0 0 0 3px var(--a-soft),0 0 0 1px var(--a-text);
+}
+/* 需要圆角的容器自行选入，避免聚焦瞬间改形状 */
+:focus-visible.has-ring{border-radius:var(--r-sm);}
+
+/* 主题切换：#3.10 —— 统一 --d-md 过渡，仅切换期间挂载 */
+.theme-anim,.theme-anim *{
+  transition:background-color var(--d-md) var(--ease-state),
+             color var(--d-md) var(--ease-state),
+             border-color var(--d-md) var(--ease-state) !important;
+}
+
+/* ============================================================
+   2. 外壳骨架 —— 侧栏 / 顶栏 / 滚动区 / Tab Bar
+   ============================================================ */
+.app{display:flex;height:100vh;height:100dvh;background:var(--c-canvas);}
+
+/* 侧栏 */
+.sidebar{
+  width:var(--sidebar-w);flex:0 0 var(--sidebar-w);
+  display:flex;flex-direction:column;
+  padding:20px 12px;
+  background:var(--c-sidebar);
+  -webkit-backdrop-filter:var(--bar-blur);backdrop-filter:var(--bar-blur);
+  border-right:1px solid var(--c-glass-border);
+  box-shadow:0 1px 0 var(--c-glass-highlight) inset,var(--sh-l2);
+  z-index:10;
+  transition:background-color var(--d-md) var(--ease-state);
+}
+.brand{display:flex;align-items:center;gap:10px;height:64px;padding:0 8px;}
+.brand-mark{
+  width:28px;height:28px;flex:0 0 28px;border-radius:8px;
+  display:grid;place-items:center;color:var(--a-text);
+}
+.brand-text{display:flex;flex-direction:column;line-height:1;min-width:0;}
+.brand-name{font-size:17px;font-weight:600;letter-spacing:-.1px;}
+.brand-ver{font-size:12px;font-weight:500;letter-spacing:.2px;color:var(--t-3);margin-top:5px;}
+.nav{display:flex;flex-direction:column;gap:2px;margin-top:4px;}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  height:44px;padding:0 12px;border:0;border-radius:var(--r-md);
+  background:transparent;color:var(--t-1);font-size:17px;font-weight:400;
+  cursor:pointer;width:100%;text-align:left;
+  transition:background-color var(--d-sm) var(--ease-state),color var(--d-sm) var(--ease-state);
+}
+.nav-item .ic{color:var(--t-2);transition:color var(--d-sm) var(--ease-state);}
+.nav-item:hover{background:var(--c-fill);}
+.nav-item[aria-current="page"]{background:var(--a-soft);color:var(--a-text);font-weight:600;}
+.nav-item[aria-current="page"] .ic{color:var(--a-text);}
+.sidebar-foot{
+  margin-top:auto;padding:16px 12px 4px;
+  font-size:12px;font-weight:500;letter-spacing:.2px;color:var(--t-3);
+}
+
+/* 主区 */
+:root{--nav-w:0px;}
+.main{flex:1;min-width:0;display:flex;flex-direction:column;position:relative;}
+
+/* 顶栏 */
+.topbar{
+  position:relative;z-index:20;flex:0 0 auto;
+  height:44px;display:flex;align-items:center;gap:12px;
+  padding:0 32px;
+  background:transparent;
+  border-bottom:1px solid transparent;
+  transition:background-color var(--d-sm) var(--ease-state),
+             border-color var(--d-sm) var(--ease-state),
+             box-shadow var(--d-sm) var(--ease-state);
+}
+.topbar.solid{
+  background:var(--c-sidebar);
+  -webkit-backdrop-filter:var(--bar-blur);backdrop-filter:var(--bar-blur);
+  box-shadow:0 1px 0 var(--c-glass-highlight) inset;
+  border-bottom-color:var(--c-sep);
+}
+.topbar-title{
+  font-size:15px;font-weight:600;letter-spacing:-.1px;color:var(--t-1);
+  opacity:0;transform:translateY(4px);
+  transition:opacity var(--d-sm) var(--ease-state),transform var(--d-sm) var(--ease-state);
+}
+.topbar-actions{margin-left:auto;display:flex;align-items:center;gap:4px;}
+.icon-btn{
+  width:32px;height:32px;border:0;border-radius:var(--r-sm);
+  display:grid;place-items:center;background:transparent;color:var(--t-2);
+  cursor:pointer;position:relative;
+  transition:background-color var(--d-sm) var(--ease-state),color var(--d-sm) var(--ease-state);
+}
+.icon-btn:hover{background:var(--c-fill);color:var(--t-1);}
+.icon-btn::after{content:"";position:absolute;inset:-6px;border-radius:var(--r-md);}
+.icon-btn:active{background:var(--c-fill-strong);}
+
+/* 滚动区 */
+.scroller{
+  flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;
+  overscroll-behavior-y:contain;
+  scrollbar-width:thin;
+  scrollbar-color:var(--c-sep-strong) transparent;
+}
+.content{position:relative;z-index:1;padding:24px 32px 40px;}
+.content-inner{max-width:var(--content-max);}
+.page{display:block;}
+.home-col{display:flex;flex-direction:column;gap:16px;min-width:0;}
+.home-grid{min-width:0;}
+
+/* Tab Bar（移动） */
+.tabbar{
+  display:none;
+  position:absolute;left:0;right:0;bottom:0;z-index:10;
+  height:calc(49px + env(safe-area-inset-bottom));
+  padding-bottom:env(safe-area-inset-bottom);
+  background:var(--c-sidebar);
+  -webkit-backdrop-filter:var(--bar-blur);backdrop-filter:var(--bar-blur);
+  box-shadow:0 1px 0 var(--c-glass-highlight) inset;
+  border-top:1px solid var(--c-sep);
+  grid-template-columns:repeat(3,1fr);
+  transition:background-color var(--d-md) var(--ease-state);
+}
+.tabbar-item{
+  border:0;background:transparent;cursor:pointer;position:relative;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  color:var(--t-bar);padding:0;
+  transition:color var(--d-xs) var(--ease-state);
+}
+.tabbar-item .ic{width:26px;height:26px;stroke-width:1.75;transition:color var(--d-xs) var(--ease-state);}
+.tabbar-item span{font-size:11px;font-weight:500;line-height:13px;letter-spacing:.3px;}
+.tabbar-item[aria-selected="true"]{color:var(--a-text);}
+.tabbar-item[aria-selected="true"] .ic{stroke-width:2;}
+.tabbar-pill{
+  position:absolute;top:4px;left:50%;margin-left:-20px;
+  width:40px;height:24px;border-radius:var(--r-xs);
+  background:var(--a-soft);opacity:0;pointer-events:none;
+  transition:opacity var(--d-sm) var(--ease-state);
+}
+.tabbar-item[aria-selected="true"] .tabbar-pill{opacity:1;}
+
+/* ============================================================
+   3. 通用排版元素
+   ============================================================ */
+.lt{
+  font-size:34px;font-weight:700;line-height:40px;letter-spacing:-.4px;
+  padding:4px 0 18px;color:var(--t-1);
+}
+.group{margin-top:24px;}
+.group:first-child{margin-top:0;}
+.gt{
+  font-size:17px;font-weight:600;line-height:22px;letter-spacing:-.1px;
+  color:var(--t-1);padding:0 4px 8px;
+}
+.foot-note{
+  font-size:13px;font-weight:400;line-height:18px;letter-spacing:.1px;
+  color:var(--t-3);padding:8px 20px 0;
+}
+.page-foot{
+  margin-top:28px;text-align:center;
+  font-size:12px;font-weight:500;line-height:16px;letter-spacing:.2px;
+  color:var(--t-3);
+}
+
+/* 卡片 */
+.card{
+  background:var(--c-card);
+  border-radius:var(--r-lg);
+  box-shadow:var(--sh-l1);
+  position:relative;
+}
+
+/* 列表行 */
+.row{
+  display:flex;align-items:center;gap:12px;
+  width:100%;min-height:52px;padding:0 20px;
+  border:0;background:transparent;color:var(--t-1);
+  font-size:17px;line-height:24px;text-align:left;position:relative;
+}
+.row + .row::before{
+  content:"";position:absolute;left:20px;right:20px;top:0;height:1px;background:var(--c-sep);
+}
+.row:first-child{border-radius:var(--r-lg) var(--r-lg) 0 0;}
+.row:last-child{border-radius:0 0 var(--r-lg) var(--r-lg);}
+.row:only-child{border-radius:var(--r-lg);}
+.row-2l{min-height:56px;padding-top:8px;padding-bottom:8px;}
+.row-act{cursor:pointer;transition:background-color var(--d-xxs) var(--ease-state);}
+.row-act:hover{background:var(--c-fill);}
+.row-act:active{background:var(--c-fill-strong);transition-duration:var(--d-xxs);}
+.rl{flex:0 0 auto;color:var(--t-1);}
+.rl-strong{font-weight:600;letter-spacing:-.1px;}
+.rv{
+  margin-left:auto;display:flex;align-items:center;gap:6px;
+  color:var(--t-2);font-size:17px;line-height:24px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.rv-mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums;font-size:15px;line-height:20px;}
+.chev{color:var(--i-faint);flex:0 0 auto;transition:transform var(--d-sm) var(--ease-state);}
+.row-act:hover .chev{transform:translateX(1px);}
+.row-main{display:flex;flex-direction:column;gap:2px;min-width:0;padding:8px 0;flex:1;}
+.row-sub{
+  font-size:13px;font-weight:400;line-height:18px;letter-spacing:.1px;color:var(--t-2);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+
+/* 徽标 */
+.chip{
+  display:inline-flex;align-items:center;gap:4px;
+  height:22px;padding:0 8px;border-radius:var(--r-xs);
+  background:var(--c-fill);color:var(--t-2);
+  font-size:12px;font-weight:500;line-height:16px;letter-spacing:.2px;
+}
+.chip .ic{color:var(--i-faint);}
+
+/* 文字按钮 */
+.text-btn{
+  border:0;background:transparent;color:var(--a-text);
+  font-size:15px;font-weight:400;line-height:20px;
+  padding:0;cursor:pointer;
+  display:inline-flex;align-items:center;gap:4px;
+  transition:opacity var(--d-sm) var(--ease-state);
+}
+.text-btn:hover{opacity:.72;}
+
+/* ============================================================
+   4. 状态卡 —— 视觉规范 §6.3
+   ============================================================ */
+.status-card{
+  position:relative;
+  padding:24px 24px 44px;
+  min-height:300px;
+  border-radius:var(--r-xl);
+  background:var(--c-glass);
+  -webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);
+  border:1px solid var(--c-glass-border);
+  box-shadow:0 1px 0 var(--c-glass-highlight) inset,var(--sh-l3);
+  display:flex;align-items:center;
+}
+.sc-main{display:flex;align-items:center;gap:32px;min-width:0;width:100%;}
+.sc-body{min-width:0;display:flex;flex-direction:column;align-items:flex-start;flex:1;}
+
+.sc-head{display:flex;align-items:center;gap:10px;min-height:28px;}
+.sc-title{
+  font-size:22px;font-weight:600;line-height:28px;letter-spacing:-.2px;
+  color:var(--t-1);min-height:28px;
+  display:flex;align-items:center;white-space:nowrap;
+}
+.sc-ell{display:none;align-items:baseline;gap:0;margin-left:1px;}
+.sc-ell i{
+  display:block;width:3.5px;height:3.5px;border-radius:50%;
+  background:currentColor;margin-left:3px;
+  opacity:0;transform:translateY(-1px);
+}
+.status-card[data-state="CONNECTING"] .sc-ell{display:flex;}
+/* 三点同帧一次性淡入（不与环争同屏动画预算） */
+.status-card[data-state="CONNECTING"] .sc-ell i{animation:dotIn 200ms var(--ease-state) forwards;}
+@keyframes dotIn{from{opacity:0;}to{opacity:1;}}
+
+/* 状态点 —— 形状表类别，颜色表严重程度（视觉 §6.3.5） */
+.sc-dot{width:10px;height:10px;flex:0 0 10px;display:grid;place-items:center;position:relative;}
+.sc-dot::before{content:"";display:block;border-radius:50%;}
+.sc-dot .dot-x{display:none;position:absolute;width:10px;height:10px;color:#FFF;}
+[data-state="CONNECTED"] .sc-dot::before{
+  width:8px;height:8px;background:var(--s-ok);
+  box-shadow:0 0 0 3px rgba(52,199,89,.14);
+}
+[data-state="IDLE"] .sc-dot::before{
+  width:8px;height:8px;background:transparent;
+  border:2px solid var(--s-idle);
+}
+[data-state="CONNECTING"] .sc-dot::before{
+  width:8px;height:8px;background:var(--s-busy);
+  animation:dotBreath 2400ms var(--ease-state) 600ms infinite alternate;
+}
+[data-state="FAILED"] .sc-dot::before{width:8px;height:8px;background:var(--s-danger);}
+[data-state="FAILED"] .sc-dot .dot-x{display:block;}
+[data-state="PAUSED"] .sc-dot::before{width:8px;height:8px;border-radius:2px;background:var(--s-warn);}
+[data-state="PAUSED"][data-pause="locked"] .sc-dot::before,
+[data-state="PAUSED"][data-pause="arrears"] .sc-dot::before{background:var(--s-danger);}
+@keyframes dotBreath{from{opacity:1;}to{opacity:.4;}}
+
+.sc-school{
+  margin-top:6px;font-size:15px;font-weight:500;line-height:20px;
+  color:var(--t-2);
+  max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+/* 副行：单行替换，容高 18px，不用 ellipsis 兜底（文案必须自己达标） */
+.sc-sub{
+  margin-top:4px;
+  font-family:var(--font-mono);font-variant-numeric:tabular-nums;
+  font-size:13px;line-height:18px;letter-spacing:0;color:var(--t-2);
+  min-height:18px;height:18px;max-width:100%;
+  white-space:nowrap;overflow:hidden;
+}
+.sc-action{
+  margin-top:20px;height:50px;width:100%;
+  display:flex;align-items:center;
+}
+
+/* 环 */
+.ring{position:relative;width:var(--ring-size);height:var(--ring-size);flex:0 0 auto;}
+.ring-glow{
+  position:absolute;inset:0;border-radius:50%;opacity:0;
+  transition:opacity var(--d-lg) var(--ease-state),box-shadow var(--d-xs) var(--ease-state);
+  will-change:opacity;
+}
+[data-ring="ok"] .ring-glow{box-shadow:0 0 44px rgba(52,199,89,.18);opacity:1;animation:glowBreath 2400ms var(--ease-state) infinite alternate;}
+[data-ring="busy"] .ring-glow{opacity:1;}
+[data-ring="busy"][data-glow="1"] .ring-glow{box-shadow:0 0 48px var(--glow-b1);}
+[data-ring="busy"][data-glow="2"] .ring-glow{box-shadow:0 0 48px var(--glow-b2);}
+[data-ring="busy"][data-glow="3"] .ring-glow{box-shadow:0 0 48px var(--glow-b3);}
+[data-ring="danger"] .ring-glow{box-shadow:0 0 40px rgba(255,59,48,.16);opacity:1;}
+[data-ring="paused"] .ring-glow{opacity:0;}
+@keyframes glowBreath{from{opacity:.55;}to{opacity:.85;}}
+
+.ring-svg{display:block;width:100%;height:100%;overflow:visible;}
+.ring-rotor{transform-box:view-box;transform-origin:64px 64px;}
+.ring-svg.spin .ring-rotor{animation:ringSpin 1200ms var(--ease-loop) infinite;}
+@keyframes ringSpin{from{transform:rotate(0);}to{transform:rotate(360deg);}}
+.ring-track{stroke:var(--s-idle);opacity:.12;transition:opacity var(--d-lg) var(--ease-state);}
+.ring-dashed{stroke:var(--s-idle);opacity:0;stroke-dasharray:2 6;transition:opacity var(--d-lg) var(--ease-state);}
+.ring-arc{
+  stroke:var(--s-idle);opacity:0;
+  transition:stroke-dasharray var(--d-lg) var(--ease-state),
+             stroke var(--d-lg) var(--ease-state),
+             opacity var(--d-sm) var(--ease-state);
+}
+.ring-end{fill:var(--s-danger);opacity:0;transition:opacity var(--d-lg) var(--ease-state);}
+[data-ring="busy"] .ring-arc{stroke:var(--s-busy);opacity:1;}
+[data-ring="ok"] .ring-arc{stroke:var(--s-ok);opacity:1;}
+[data-ring="danger"] .ring-arc{stroke:var(--s-danger);opacity:1;}
+[data-ring="danger"] .ring-end{opacity:1;}
+[data-ring="paused"] .ring-arc{stroke:var(--s-warn);opacity:1;}
+[data-state="PAUSED"][data-pause="locked"] .ring-arc,
+[data-state="PAUSED"][data-pause="arrears"] .ring-arc{stroke:var(--s-danger);}
+[data-ring="paused"] .ring-track{opacity:0;}
+[data-ring="paused"] .ring-dashed{opacity:1;}
+
+.ring-center{
+  position:absolute;inset:0;display:grid;place-items:center;
+  pointer-events:none;
+}
+.ring-time{
+  font-family:var(--font-mono);font-variant-numeric:tabular-nums;
+  font-size:20px;font-weight:600;line-height:24px;letter-spacing:-.4px;
+  color:var(--t-1);opacity:0;transition:opacity var(--d-sm) var(--ease-state);
+  white-space:nowrap;
+}
+.status-card[data-state="CONNECTED"] .ring-time{opacity:1;}
+
+/* 卡底倒计时（绝对定位，不参与文档流；视觉 §6.3.4） */
+.sc-count{
+  position:absolute;left:24px;right:24px;bottom:16px;
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  opacity:0;transition:opacity var(--d-xs) var(--ease-exit);
+  pointer-events:none;
+}
+.status-card[data-state="FAILED"] .sc-count{opacity:1;}
+.sc-count-text{
+  font-family:var(--font-mono);font-variant-numeric:tabular-nums;
+  font-size:13px;font-weight:400;line-height:18px;letter-spacing:.1px;
+  color:var(--s-warn-ink);white-space:nowrap;
+}
+.sc-count-text b{font-weight:600;}
+.sc-count-track{
+  width:100%;height:2px;flex:0 0 2px;
+  border-radius:1px;background:var(--c-fill-strong);overflow:hidden;
+}
+.sc-count-bar{
+  height:100%;width:100%;border-radius:1px;
+  background:var(--s-warn);transform-origin:left center;transform:scaleX(1);
+  transition:transform 1s var(--ease-loop);
+}
+
+/* ============================================================
+   5. 按钮 —— ux §3.3
+   ============================================================ */
+.btn{
+  -webkit-appearance:none;appearance:none;
+  border:0;cursor:pointer;
+  height:44px;padding:0 22px;min-width:96px;
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  border-radius:var(--r-pill);
+  font-size:17px;font-weight:600;line-height:22px;letter-spacing:-.1px;
+  white-space:nowrap;position:relative;
+  transition:transform var(--d-md) var(--ease-press),
+             background-color var(--d-sm) var(--ease-state),
+             color var(--d-sm) var(--ease-state),
+             opacity var(--d-sm) var(--ease-state);
+}
+.btn:active{transform:scale(.97);transition-duration:var(--d-xxs);}
+.btn[disabled]{cursor:default;}
+.btn[aria-disabled="true"]{cursor:default;}
+
+.btn-primary{background:var(--a-fill);color:#fff;height:50px;}
+.btn-primary:hover{background:var(--a-fill-press);}
+.btn-primary:active{background:var(--a-fill-press);}
+.btn-secondary{
+  background:var(--c-fill);color:var(--a-text);height:40px;
+  font-weight:600;
+}
+.btn-secondary:hover{background:var(--c-fill-strong);}
+.btn-ghost{background:var(--c-fill);color:var(--t-2);height:40px;font-weight:600;}
+.btn-ghost:hover{background:var(--c-fill-strong);color:var(--s-danger-ink);}
+.btn-warn{background:var(--s-warn-fill);color:var(--s-warn-ink);height:44px;}
+.btn-warn:hover{background:var(--s-warn-fill);filter:brightness(.97);}
+.btn-neutral{
+  background:var(--c-fill);color:var(--t-1);height:40px;
+  font-weight:600;
+}
+.btn-neutral:hover{background:var(--c-fill-strong);}
+.btn-spin{display:none;}
+.btn.is-loading .btn-spin{display:block;}
+.spinner{
+  width:16px;height:16px;border-radius:50%;
+  border:1.5px solid currentColor;border-top-color:transparent;
+  animation:spin 800ms var(--ease-loop) infinite;flex:0 0 16px;opacity:.75;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ============================================================
+   6. 数据块 2×2
+   ============================================================ */
+.dg{
+  display:grid;grid-template-columns:1fr 1fr;gap:1px;
+  background:var(--c-sep);border-radius:var(--r-lg);overflow:hidden;
+  box-shadow:var(--sh-l1);
+}
+.dg-cell{
+  position:relative;background:var(--c-card);height:64px;padding:0 20px;
+  display:flex;flex-direction:column;justify-content:center;gap:2px;
+  min-width:0;
+}
+.dg-label{font-size:15px;font-weight:400;line-height:20px;color:var(--t-2);}
+.dg-value{
+  font-size:15px;font-weight:600;line-height:20px;color:var(--t-1);
+  font-family:var(--font-mono);font-variant-numeric:tabular-nums;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.dg-value .dcol{display:inline-block;height:20px;overflow:hidden;vertical-align:top;}
+.dg-value .dch{display:block;height:20px;line-height:20px;}
+
+/* ============================================================
+   7. 开关 —— ux §3.4
+   ============================================================ */
+.switch{
+  position:relative;flex:0 0 auto;
+  width:51px;height:31px;border-radius:var(--r-pill);
+  border:0;padding:0;cursor:pointer;
+  background:var(--c-fill-strong);
+  transition:background-color var(--d-md) var(--ease-state),
+             transform var(--d-sm) var(--ease-press);
+  transform-origin:var(--sw-origin,left center);
+}
+.switch::before{content:"";position:absolute;inset:-6.5px 0;border-radius:var(--r-pill);}
+.switch[aria-checked="true"]{background:var(--s-ok);}
+.switch-thumb{
+  position:absolute;top:2px;left:2px;
+  width:27px;height:27px;border-radius:50%;
+  background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.20);
+  transform:translateX(0);
+  transition:transform var(--d-md) var(--ease-state),width var(--d-xs) var(--ease-press);
+}
+.switch[aria-checked="true"] .switch-thumb{transform:translateX(20px);}
+.switch:active{transform:scaleX(1.04);transition-duration:var(--d-xs);}
+.switch:active .switch-thumb{width:29px;transition-duration:var(--d-xs);}
+.switch[aria-checked="true"]{--sw-origin:right center;}
+
+/* ============================================================
+   8. 分段控件
+   ============================================================ */
+.seg{
+  position:relative;display:inline-flex;align-items:center;
+  height:32px;padding:2px;border-radius:var(--r-sm);
+  background:var(--c-fill);
+  flex:0 0 auto;
+}
+.seg-ind{
+  position:absolute;top:2px;left:2px;
+  width:calc((100% - 4px) / var(--n,3));height:28px;
+  border-radius:8px;background:var(--c-card);
+  box-shadow:0 1px 2px rgba(0,0,0,.10),0 0 0 .5px rgba(0,0,0,.04);
+  transform:translateX(calc(var(--i,0) * 100%));
+  transition:transform var(--d-sm) var(--ease-state);
+  pointer-events:none;
+}
+.seg-item{
+  position:relative;z-index:1;
+  border:0;background:transparent;cursor:pointer;
+  height:28px;padding:0 8px;border-radius:8px;
+  flex:1 1 0;min-width:0;
+  font-size:13px;font-weight:500;line-height:18px;letter-spacing:.1px;
+  color:var(--t-2);white-space:nowrap;
+  transition:color var(--d-sm) var(--ease-state);
+}
+.seg-item[aria-checked="true"]{color:var(--t-1);font-weight:600;}
+
+/* ============================================================
+   9. 日志
+   ============================================================ */
+.logcard{padding:20px;}
+.logcard-head{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  margin-bottom:12px;
+}
+.logcard-title{font-size:17px;font-weight:600;line-height:22px;letter-spacing:-.1px;}
+.logcard-link{font-size:13px;font-weight:600;line-height:18px;letter-spacing:.1px;}
+.loginset{
+  position:relative;background:var(--c-card-inset);border-radius:var(--r-md);
+  padding:12px 16px;
+  font-family:var(--font-mono);font-variant-numeric:tabular-nums;
+  font-size:12px;line-height:18px;
+  contain:layout paint;
+}
+.logscroll{
+  height:90px;overflow-y:auto;overflow-x:hidden;
+}
+.logscroll>div{min-height:100%;
+  scrollbar-width:thin;scrollbar-color:var(--c-fill-strong) transparent;
+}
+.logline{display:flex;gap:8px;height:18px;align-items:baseline;overflow:hidden;}
+.logline .lt-time{flex:0 0 56px;text-align:right;color:var(--t-3);white-space:nowrap;}
+.logline .lt-msg{
+  color:var(--t-1);min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.logline.enter{animation:logIn var(--d-md) var(--ease-enter) both;}
+@keyframes logIn{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);}}
+.logempty{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  height:100%;color:var(--t-2);font-size:15px;line-height:20px;
+}
+.logempty .ic{color:var(--t-4);}
+.logpage-empty{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+  height:100%;color:var(--t-2);font-size:15px;line-height:20px;
+}
+.logpage-empty .sub{font-size:13px;line-height:18px;color:var(--t-3);}
+
+/* 完整日志浮层 */
+.overlay{
+  position:fixed;inset:0;z-index:60;
+  display:flex;flex-direction:column;
+  background:var(--c-canvas);
+}
+.overlay-head{
+  flex:0 0 auto;height:52px;display:flex;align-items:center;gap:12px;
+  padding:0 16px 0 20px;
+  border-bottom:1px solid var(--c-sep);
+  background:var(--c-card);
+}
+.overlay-title{font-size:17px;font-weight:600;line-height:22px;letter-spacing:-.1px;}
+.overlay-actions{margin-left:auto;display:flex;align-items:center;gap:12px;}
+.logview{
+  flex:1;min-height:0;position:relative;overflow-y:auto;
+  padding:12px 0 calc(16px + env(safe-area-inset-bottom));
+  scrollbar-width:thin;scrollbar-color:var(--c-sep-strong) transparent;
+  contain:layout paint;
+}
+.logview-inner{position:relative;}
+.logrow{
+  position:absolute;left:0;right:0;height:18px;
+  display:flex;gap:8px;align-items:baseline;
+  padding:0 20px;
+  font-family:var(--font-mono);font-variant-numeric:tabular-nums;
+  font-size:12px;line-height:18px;
+}
+.logrow .lt-time{flex:0 0 56px;text-align:right;color:var(--t-3);white-space:nowrap;}
+.logrow .lt-msg{color:var(--t-1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.jump-pill{
+  position:absolute;left:50%;bottom:16px;transform:translateX(-50%) translateY(4px);
+  height:32px;padding:0 14px;border-radius:var(--r-pill);border:0;
+  background:var(--c-toast);color:var(--a-text);
+  box-shadow:var(--sh-l3);
+  font-size:13px;font-weight:600;line-height:18px;cursor:pointer;
+  opacity:0;pointer-events:none;
+  transition:opacity var(--d-sm) var(--ease-state),transform var(--d-sm) var(--ease-state);
+}
+.jump-pill.show{opacity:1;pointer-events:auto;transform:translateX(-50%) translateY(0);}
+
+
+/* 玻璃冻结：scrim 打开时围栏层降为不透明底，与 scrim 同步过渡（视觉 §9.4） */
+.glass-frozen{
+  background:var(--c-frozen);
+  -webkit-backdrop-filter:none;backdrop-filter:none;
+  box-shadow:0 1px 0 var(--c-glass-highlight) inset,var(--sh-l2);
+}
+
+/* ============================================================
+   9b. 骨架屏 —— 仅数据块与日志；状态卡永不骨架化（视觉 §9.2）
+   ============================================================ */
+.skel{
+  position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;gap:8px;
+  padding:0 20px;border-radius:inherit;
+  background:var(--c-card);
+  transition:opacity var(--d-xs) var(--ease-exit);
+  pointer-events:none;
+}
+.skel[hidden]{display:none !important;}
+.skel-bar{
+  background:var(--c-skel);border-radius:var(--r-xs);position:relative;overflow:hidden;flex:0 0 auto;
+}
+.skel-bar.b-label{width:60px;height:12px;}
+.skel-bar.b-value{width:96px;height:16px;}
+.skel-bar.b-line{width:100%;height:12px;}
+.skel-lines{display:flex;flex-direction:column;gap:6px;width:100%;}
+.skel.shimmer .skel-bar::after{
+  content:;position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent,var(--c-skel-hi),transparent);
+  transform:translateX(-100%);
+  animation:shimmer 1400ms var(--ease-loop) infinite;
+}
+@keyframes shimmer{to{transform:translateX(100%);}}
+.dg-cell.is-loading .dg-label,.dg-cell.is-loading .dg-value{opacity:0;}
+
+/* ============================================================
+   10. Toast
+   ============================================================ */
+.toast-host{
+  position:absolute;top:12px;left:0;right:0;z-index:70;
+  display:flex;justify-content:center;
+  pointer-events:none;
+  padding:0 16px;
+}
+.toast{
+  pointer-events:auto;
+  width:min(360px,100%);
+  display:flex;align-items:center;gap:10px;
+  padding:11px 14px;border-radius:var(--r-lg);
+  background:var(--c-toast);
+  border:1px solid var(--c-glass-border);
+  box-shadow:var(--sh-l3);
+  color:var(--t-1);font-size:15px;line-height:20px;
+  opacity:0;transform:translateY(-12px);
+  transition:opacity 300ms var(--ease-enter),transform 300ms var(--ease-enter);
+}
+@media (min-width:768px){
+  /* 平时居内容区，Sheet 打开时居视口（= 居 Sheet） */
+  .toast-host{left:var(--nav-w);}
+  body.sheet-open .toast-host{left:0;}
+}
+.toast.show{opacity:1;transform:translateY(0);}
+.toast.out{opacity:0;transform:translateY(-12px);transition:opacity 180ms var(--ease-exit),transform 180ms var(--ease-exit);}
+.toast-icon{flex:0 0 20px;color:var(--t-2);}
+.toast-text{flex:1;min-width:0;}
+.toast-action{
+  flex:0 0 auto;border:0;background:transparent;color:var(--a-text);
+  font-size:15px;font-weight:600;line-height:20px;cursor:pointer;
+  padding:6px 4px;margin:-6px 0;
+}
+
+/* ============================================================
+   11. Sheet —— ux §3.6
+   ============================================================ */
+.scrim{
+  position:fixed;inset:0;z-index:30;
+  background:var(--c-scrim);
+  opacity:0;pointer-events:none;
+  transition:opacity var(--d-md) var(--ease-enter);
+}
+.scrim.show{opacity:1;pointer-events:auto;}
+.sheet{
+  position:fixed;left:50%;bottom:0;z-index:40;
+  width:min(560px,100%);
+  transform:translate(-50%,100%);
+  background:var(--c-card);
+  border-radius:var(--r-xl) var(--r-xl) 0 0;
+  box-shadow:0 -12px 48px -12px rgba(16,16,20,.28);
+  padding:8px 0 calc(12px + env(safe-area-inset-bottom));
+  max-height:min(560px,86vh);
+  display:flex;flex-direction:column;
+  will-change:transform;
+}
+[data-theme="dark"] .sheet{box-shadow:0 -12px 48px -12px rgba(0,0,0,.9);}
+.sheet.anim{transition:transform var(--d-sheet) var(--ease-enter);}
+.sheet.open{transform:translate(-50%,0);}
+.sheet.closing{transition:transform var(--d-md) var(--ease-exit);}
+.sheet-snap{transition:transform var(--d-md) var(--ease-state);}
+.sheet-handle{
+  height:24px;display:grid;place-items:center;cursor:grab;
+  flex:0 0 auto;touch-action:none;
+}
+.sheet-handle::after{
+  content:"";width:36px;height:5px;border-radius:var(--r-pill);
+  background:var(--c-fill-strong);
+}
+.sheet-title{
+  font-size:17px;font-weight:600;line-height:22px;letter-spacing:-.1px;
+  padding:4px 20px 12px;color:var(--t-1);
+}
+.sheet-body{overflow-y:auto;min-height:0;scrollbar-width:thin;}
+.sheet-row{
+  display:flex;align-items:center;gap:10px;width:100%;
+  min-height:56px;padding:8px 20px;border:0;background:transparent;
+  text-align:left;cursor:pointer;position:relative;
+  transition:background-color var(--d-xxs) var(--ease-state);
+}
+.sheet-row:hover{background:var(--c-fill);}
+.sheet-row:active{background:var(--c-fill-strong);}
+.sheet-row + .sheet-row::before{
+  content:"";position:absolute;left:20px;right:20px;top:0;height:1px;background:var(--c-sep);
+}
+.sheet-row-main{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1;}
+.sheet-row-name{font-size:17px;line-height:24px;color:var(--t-1);}
+.sheet-row-code{
+  font-family:var(--font-mono);font-size:13px;line-height:18px;color:var(--t-2);
+}
+.sheet-row .check{color:var(--a-text);opacity:0;}
+.sheet-row[aria-pressed="true"] .check{opacity:1;}
+.confirm-bar{
+  margin:4px 20px 8px;padding:12px 14px;
+  border-radius:var(--r-md);background:var(--s-warn-fill);
+  opacity:0;transform:translateY(4px);
+  transition:opacity var(--d-sm) var(--ease-state),transform var(--d-sm) var(--ease-state);
+}
+.confirm-bar.show{opacity:1;transform:translateY(0);}
+.confirm-text{
+  font-size:13px;line-height:18px;letter-spacing:.1px;color:var(--s-warn-ink);
+  margin-bottom:10px;
+}
+.confirm-actions{display:flex;gap:8px;}
+.mini-btn{
+  height:32px;padding:0 14px;border:0;border-radius:var(--r-pill);
+  font-size:13px;font-weight:600;line-height:18px;cursor:pointer;
+  background:var(--c-fill);color:var(--t-1);
+  transition:background-color var(--d-sm) var(--ease-state);
+}
+.mini-btn:hover{background:var(--c-fill-strong);}
+.mini-btn.danger{background:var(--a-fill);color:#fff;}
+.mini-btn.danger:hover{background:var(--a-fill-press);}
+
+/* ============================================================
+   12. 行内数字编辑器
+   ============================================================ */
+.num-edit{
+  width:56px;height:32px;padding:0 8px;
+  border-radius:var(--r-sm);
+  border:1px solid var(--c-sep-strong);
+  background:var(--c-card-inset);
+  color:var(--t-1);text-align:right;
+  font-family:var(--font-mono);font-variant-numeric:tabular-nums;
+  font-size:15px;line-height:20px;
+  position:relative;
+  transition:border-color var(--d-sm) var(--ease-state),box-shadow var(--d-sm) var(--ease-state);
+  -moz-appearance:textfield;
+}
+.num-edit::-webkit-outer-spin-button,.num-edit::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
+.num-edit:focus{border-color:var(--a-text);}
+.num-wrap{position:relative;}
+.num-wrap::before{content:"";position:absolute;inset:-6.5px 0;border-radius:var(--r-md);}
+.unit{font-size:15px;line-height:20px;color:var(--t-2);}
+
+/* ============================================================
+   13. 演示分组（弱化）
+   ============================================================ */
+.demo{margin-top:28px;}
+.demo-disc{display:none;}
+.chip-group{display:contents;}
+.demo-chips{display:flex;flex-wrap:wrap;align-items:center;gap:6px;}
+.demo-label{
+  font-size:12px;font-weight:500;line-height:16px;letter-spacing:.2px;
+  color:var(--t-3);margin-right:2px;
+}
+.demo-sep{width:1px;height:12px;background:var(--c-sep-strong);margin:0 4px;}
+.chip-btn{
+  height:24px;padding:0 8px;border-radius:var(--r-xs);
+  border:1px solid var(--c-sep-strong);background:transparent;
+  color:var(--t-3);font-size:12px;font-weight:500;line-height:16px;letter-spacing:.2px;
+  cursor:pointer;white-space:nowrap;
+  transition:background-color var(--d-sm) var(--ease-state),
+             color var(--d-sm) var(--ease-state),
+             border-color var(--d-sm) var(--ease-state);
+}
+.chip-btn:hover{background:var(--c-fill);color:var(--t-2);}
+.chip-btn[aria-pressed="true"]{
+  background:var(--a-soft);border-color:transparent;color:var(--a-text);font-weight:600;
+}
+.demo-note{font-size:12px;line-height:16px;letter-spacing:.2px;color:var(--t-3);margin-top:10px;}
+
+/* ============================================================
+   14. 响应式 —— 视觉规范 §5.1
+   ============================================================ */
+@media (max-width:767px){
+  .sidebar{display:none;}
+  .tabbar{display:grid;}
+  .topbar{
+    height:calc(44px + env(safe-area-inset-top));
+    padding:env(safe-area-inset-top) 16px 0;
+    background:var(--c-sidebar);
+    -webkit-backdrop-filter:var(--bar-blur);backdrop-filter:var(--bar-blur);
+    box-shadow:0 1px 0 var(--c-glass-highlight) inset;
+    border-bottom:1px solid transparent;
+  }
+  .topbar-title{position:absolute;left:50%;transform:translateX(-50%) translateY(4px);opacity:0;}
+  .content{padding:0 16px calc(49px + env(safe-area-inset-bottom) + 16px);}
+  .lt{font-size:34px;font-weight:700;line-height:40px;padding:0 0 16px;}
+  .group{margin-top:20px;}
+  .card{border-radius:var(--r-lg);}
+  .status-card{
+    --ring-size:112px;
+    padding:20px 20px 52px;min-height:268px;
+  }
+  .sc-main{flex-direction:column;gap:0;}
+  .sc-body{align-items:center;text-align:center;width:100%;margin-top:14px;flex:0 0 auto;}
+  .sc-head{justify-content:center;}
+  .sc-school,.sc-sub{text-align:center;}
+  .sc-action{margin-top:18px;}
+  .btn-primary{height:50px;width:100%;}
+  .btn-secondary,.btn-ghost{height:40px;width:100%;}
+  .btn-warn{width:100%;}
+  .sc-count{left:20px;right:20px;bottom:16px;}
+  /* M1：演示块收起为一行 disclosure，展开后两组 chip 各自折行 */
+  .demo{margin-top:20px;}
+  .demo-disc{
+    display:flex;align-items:center;gap:8px;width:100%;
+    height:44px;padding:0 4px;border:0;background:transparent;
+    font:inherit;color:var(--t-2);cursor:pointer;text-align:left;
+    transition:background-color var(--d-xxs) var(--ease-state);
+  }
+  .demo-disc:active{background:var(--c-fill);border-radius:var(--r-sm);}
+  .demo-disc-label{
+    font-size:12px;font-weight:500;line-height:16px;letter-spacing:.2px;color:var(--t-3);
+  }
+  .demo-disc-value{
+    margin-left:auto;font-size:13px;line-height:18px;letter-spacing:.1px;color:var(--t-2);
+  }
+  .demo-disc .chev{transition:transform var(--d-sm) var(--ease-state);color:var(--i-faint);}
+  .demo.is-open .demo-disc .chev{transform:rotate(90deg);}
+  .demo-body{display:none;}
+  .demo.is-open .demo-body{display:block;}
+  .demo-label{display:none;}
+  .demo-sep{display:none;}
+  .demo-chips{flex-direction:column;align-items:stretch;gap:8px;padding-top:4px;}
+  .chip-group{display:flex;flex-wrap:wrap;gap:6px;}
+  .logscroll{height:54px;overflow:hidden;}
+  .rv{font-size:15px;line-height:20px;}
+  .rl{font-size:16px;}
+  .dg-cell{height:auto;min-height:64px;padding:10px 12px;}
+  .dg-label{font-size:13px;line-height:18px;}
+  .dg-value{
+    font-size:12px;line-height:16px;
+    white-space:normal;overflow-wrap:anywhere;
+  }
+  .home-col{gap:12px;}
+  .group{margin-top:20px;}
+  .toast-host{top:calc(env(safe-area-inset-top) + 12px);}
+  .overlay-head{height:calc(48px + env(safe-area-inset-top));padding-top:env(safe-area-inset-top);}
+  .logrow{padding:0 16px;}
+}
+@media (min-width:768px) and (max-width:1023px){
+  .sidebar{width:88px;flex:0 0 88px;padding:20px 8px;align-items:center;}
+  .brand{justify-content:center;padding:0;width:100%;height:64px;}
+  .brand-text{display:none;}
+  .nav{width:100%;}
+  .nav-item{
+    flex-direction:column;justify-content:center;gap:3px;height:56px;
+    padding:0;text-align:center;
+  }
+  .nav-item .ic{width:22px;height:22px;}
+  .nav-item span{font-size:10px;font-weight:500;line-height:13px;letter-spacing:.2px;}
+  .sidebar-foot{display:none;}
+  .topbar{padding:0 24px;}
+  :root{--nav-w:88px;}
+  .content{padding:24px 24px 40px;}
+  .content-inner{max-width:720px;margin:0 auto;}
+}
+@media (min-width:1024px){
+  :root{--nav-w:264px;}
+  .lt{padding:0 0 20px;}
+  /* F3：状态卡内容组在卡内水平居中，最大宽度 420 */
+  .status-card{justify-content:center;}
+  .sc-main{width:100%;max-width:420px;}
+}
+/* F4：窗口 1280 的实际视口约 1265（扣除窗口边框与滚动条），故取 1200 作为居中起点 */
+@media (min-width:1200px){
+  .content-inner{margin:0 auto;}
+}
+@media (min-width:1400px){
+  :root{--content-max:1096px;}
+  .home-grid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:24px;align-items:start;}
+  .home-grid > .home-right{position:sticky;top:0;}
+  .home-col{display:flex;flex-direction:column;gap:16px;}
+  .home-right .logcard{margin:0;}
+}
+
+/* ============================================================
+   15. reduced-motion / contrast 降级 —— ux §7.1
+   ============================================================ */
+/* 窗口不可见时暂停全部循环动画，回来续跑 */
+html.is-hidden *,html.is-hidden *::before,html.is-hidden *::after{animation-play-state:paused !important;}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:.001ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;
+  }
+  .ring-svg.spin{animation:none;}
+  .ring-glow{animation:none !important;opacity:.7 !important;}
+  .sc-dot::before{animation:none !important;opacity:1 !important;}
+  .status-card[data-state="CONNECTING"] .sc-ell i{opacity:1;animation:none !important;}
+  .logline.enter{animation:none;}
+  .skel.shimmer .skel-bar::after{animation:none;background:none;}
+  .toast{transform:none !important;transition:opacity 150ms linear !important;}
+  .toast.out{transform:none !important;}
+  .ring-glow{animation:none !important;opacity:.7 !important;}
+
+}
+@media (prefers-contrast:more){
+  :root{
+    --c-glass:rgba(255,255,255,.96);
+    --c-sidebar:rgba(255,255,255,.96);
+    --c-sep:rgba(60,60,67,.32);
+  }
+  [data-theme="dark"]{
+    --c-glass:rgba(26,26,32,.98);
+    --c-sidebar:rgba(22,22,28,.98);
+    --c-sep:rgba(255,255,255,.26);
+  }
+  :focus-visible{box-shadow:0 0 0 3px var(--a-text) !important;}
+}
+@supports not (backdrop-filter:blur(1px)){
+  :root{--c-glass:rgba(255,255,255,.94);--c-sidebar:rgba(255,255,255,.94);}
+  [data-theme="dark"]{--c-glass:rgba(26,26,32,.94);--c-sidebar:rgba(22,22,28,.94);}
+}
+</style>
+</head>
+<body>
+
+<!-- 图标符号表：24 viewBox / stroke 1.75 / round -->
+<svg class="icon-defs" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="i-house" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 10.6 12 4.2l8 6.4V19a1.6 1.6 0 0 1-1.6 1.6H5.6A1.6 1.6 0 0 1 4 19z"/>
+    <path d="M9.4 20.6v-6.2h5.2v6.2"/>
+  </symbol>
+  <symbol id="i-person" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="8.2" r="3.6"/>
+    <path d="M4.8 20.2c0-3.9 3.2-6.2 7.2-6.2s7.2 2.3 7.2 6.2"/>
+  </symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="3.3"/>
+    <path d="M12 3.6v2.2M12 18.2v2.2M20.4 12h-2.2M5.8 12H3.6M18.05 5.95 16.5 7.5M7.5 16.5l-1.55 1.55M18.05 18.05 16.5 16.5M7.5 7.5 5.95 5.95"/>
+  </symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M20.4 12a8.4 8.4 0 1 1-2.46-5.94"/>
+    <path d="M20.4 4.2v6.1h-6.1"/>
+  </symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M9.6 5.8 15.8 12l-6.2 6.2"/>
+  </symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="4.8" y="10.4" width="14.4" height="9.8" rx="2.6"/>
+    <path d="M8.4 10.4V8a3.6 3.6 0 0 1 7.2 0v2.4"/>
+  </symbol>
+  <symbol id="i-list" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="4.6" y="3.6" width="14.8" height="16.8" rx="2.6"/>
+    <path d="M8.6 8.4h6.8M8.6 12h6.8M8.6 15.6h4"/>
+  </symbol>
+  <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M6.6 6.6 17.4 17.4M17.4 6.6 6.6 17.4"/>
+  </symbol>
+  <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M5.4 12.6 9.6 16.8 18.6 7.4"/>
+  </symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 4.6 20.8 19.4H3.2z"/>
+    <path d="M12 10v4.1M12 16.9h.02"/>
+  </symbol>
+  <symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="8.4"/>
+    <path d="M12 11v5.4M12 7.7h.02"/>
+  </symbol>
+  <symbol id="i-github" viewBox="0 0 24 24">
+    <path fill="currentColor" d="M12 2C6.48 2 2 6.58 2 12.23c0 4.5 2.87 8.32 6.84 9.67.5.09.68-.22.68-.49v-1.7c-2.78.61-3.37-1.36-3.37-1.36-.45-1.18-1.11-1.5-1.11-1.5-.9-.63.07-.62.07-.62 1 .07 1.53 1.05 1.53 1.05.9 1.56 2.35 1.11 2.92.85.09-.66.35-1.11.63-1.37-2.22-.26-4.56-1.14-4.56-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.28 2.75 1.05a9.4 9.4 0 0 1 5 0c1.91-1.33 2.75-1.05 2.75-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.8-4.57 5.06.36.32.68.94.68 1.9v2.82c0 .27.18.59.69.49A10.06 10.06 0 0 0 22 12.23C22 6.58 17.52 2 12 2z"/>
+  </symbol>
+</svg>
+
+<div class="app">
+  <!-- 侧栏 -->
+  <aside class="sidebar" aria-label="主导航">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">
+        <svg class="ic ic-28" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4.4 11.2a13.6 13.6 0 0 1 19.2 0"/>
+          <path d="M8 15.2a9 9 0 0 1 12 0"/>
+          <path d="M11.7 19.2a4.6 4.6 0 0 1 4.6 0"/>
+          <circle cx="14" cy="22.8" r="1.1" fill="currentColor" stroke="none"/>
+        </svg>
+      </span>
+      <span class="brand-text">
+        <span class="brand-name">懒得连校园网</span>
+        <span class="brand-ver">v1.1 · MIT</span>
+      </span>
+    </div>
+    <nav class="nav" id="sideNav">
+      <button class="nav-item" data-nav="home" aria-current="page">
+        <svg class="ic ic-20" aria-hidden="true"><use href="#i-house"/></svg><span>主页</span>
+      </button>
+      <button class="nav-item" data-nav="me">
+        <svg class="ic ic-20" aria-hidden="true"><use href="#i-person"/></svg><span>我的</span>
+      </button>
+      <button class="nav-item" data-nav="settings">
+        <svg class="ic ic-20" aria-hidden="true"><use href="#i-gear"/></svg><span>设置</span>
+      </button>
+    </nav>
+    <div class="sidebar-foot">v1.1 · MIT</div>
+  </aside>
+
+  <!-- 主区 -->
+  <div class="main">
+    <header class="topbar" id="topbar">
+      <span class="topbar-title" id="topbarTitle">主页</span>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="refreshBtn" aria-label="刷新状态">
+          <svg class="ic ic-20" aria-hidden="true"><use href="#i-refresh"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="scroller" id="scroller">
+      <div class="content">
+        <div class="content-inner">
+
+          <!-- ================= 主页 ================= -->
+          <section class="page" id="page-home" data-page="home">
+            <h1 class="lt">主页</h1>
+            <div class="home-grid">
+              <div class="home-col">
+
+                <!-- 状态卡：5 态共用同一 DOM，仅切 data-state -->
+                <section class="status-card" id="statusCard" data-state="IDLE" data-ring="idle"
+                         data-glow="1" data-pause="retry" aria-labelledby="scTitle">
+                  <div class="sc-main">
+                  <div class="ring">
+                    <div class="ring-glow" aria-hidden="true"></div>
+                    <svg class="ring-svg" id="ringSvg" viewBox="0 0 128 128" aria-hidden="true" focusable="false">
+                      <g transform="rotate(-90 64 64)" fill="none" stroke-linecap="round">
+                        <g class="ring-rotor" id="ringRotor">
+                          <circle class="ring-track" cx="64" cy="64" r="60.5" stroke-width="7"/>
+                          <circle class="ring-dashed" cx="64" cy="64" r="60.5" stroke-width="7"/>
+                          <circle class="ring-arc" id="ringArc" cx="64" cy="64" r="60.5" stroke-width="7"
+                                  stroke-dasharray="0 380.1"/>
+                          <circle class="ring-end" id="ringEnd" cx="99.56" cy="112.94" r="3.6"/>
+                        </g>
+                      </g>
+                    </svg>
+                    <div class="ring-center"><span class="ring-time" id="ringTime">02:14:36</span></div>
+                  </div>
+
+                  <div class="sc-body">
+                    <div class="sc-head">
+                      <h2 class="sc-title" id="scTitle">
+                        <span id="scTitleText">未连接</span>
+                        <span class="sc-ell" aria-hidden="true"><i></i><i></i><i></i></span>
+                      </h2>
+                      <span class="sc-dot" aria-hidden="true">
+                        <svg class="dot-x" viewBox="0 0 10 10" fill="none" stroke="currentColor"
+                             stroke-width="1.5" stroke-linecap="round"><path d="M2.2 2.2 7.8 7.8M7.8 2.2 2.2 7.8"/></svg>
+                      </span>
+                    </div>
+                    <div class="sc-school" id="scSchool">商丘应用科技学院 · YYKJXY</div>
+                    <div class="sc-sub" id="scSub">上次连接 今天 08:12</div>
+                    <div class="sc-action">
+                      <button class="btn btn-primary" id="scBtn" type="button">
+                        <span class="spinner btn-spin" aria-hidden="true"></span>
+                        <span id="scBtnLabel">连接</span>
+                      </button>
+                    </div>
+                  </div>
+                  </div>
+
+                  <div class="sc-count">
+                    <span class="sc-count-text" id="cdText"><b>12</b> 秒后自动重试</span>
+                    <div class="sc-count-track">
+                      <div class="sc-count-bar" id="cdBar" role="progressbar"
+                           aria-valuemin="0" aria-valuemax="12" aria-valuenow="12"
+                           aria-valuetext="12 秒后自动重试" aria-live="off"></div>
+                    </div>
+                  </div>
+                </section>
+
+                <!-- 数据块 -->
+                <section class="dg" id="dgGrid" aria-label="连接数据">
+                  <div class="dg-cell">
+                    <span class="dg-label">在线时长</span>
+                    <span class="dg-value" id="dgSession">02:14:36</span>
+                    <div class="skel" hidden>
+                      <span class="skel-bar b-label"></span>
+                      <span class="skel-bar b-value"></span>
+                    </div>
+                  </div>
+                  <div class="dg-cell">
+                    <span class="dg-label">IP 地址</span>
+                    <span class="dg-value" id="dgIp">10.10.23.87</span>
+                    <div class="skel" hidden>
+                      <span class="skel-bar b-label"></span>
+                      <span class="skel-bar b-value"></span>
+                    </div>
+                  </div>
+                  <div class="dg-cell">
+                    <span class="dg-label">认证服务器</span>
+                    <span class="dg-value" id="dgServer">10.10.1.101/eportal/</span>
+                    <div class="skel" hidden>
+                      <span class="skel-bar b-label"></span>
+                      <span class="skel-bar b-value"></span>
+                    </div>
+                  </div>
+                  <div class="dg-cell">
+                    <span class="dg-label">本次重连次数</span>
+                    <span class="dg-value" id="dgRetry">3</span>
+                    <div class="skel" hidden>
+                      <span class="skel-bar b-label"></span>
+                      <span class="skel-bar b-value"></span>
+                    </div>
+                  </div>
+                </section>
+
+                <!-- 自动重连开关 -->
+                <section class="card" aria-label="自动重连">
+                  <div class="row row-2l">
+                    <div class="row-main">
+                      <span class="rl rl-strong">断线自动重连</span>
+                      <span class="row-sub" id="arSub">断网后 8 秒内自动发起认证</span>
+                    </div>
+                    <button class="switch" id="autoReconnect" role="switch" aria-checked="true"
+                            aria-labelledby="arLabel" aria-describedby="arSub" type="button">
+                      <span class="switch-thumb"></span>
+                      <span class="sr-only" id="arLabel">断线自动重连</span>
+                    </button>
+                  </div>
+                </section>
+              </div>
+
+              <div class="home-col home-right">
+                <!-- 最近运行日志 -->
+                <section class="card logcard" aria-label="最近运行日志">
+                  <div class="logcard-head">
+                    <h2 class="logcard-title">最近运行日志</h2>
+                    <button class="text-btn logcard-link" id="openLog" type="button">
+                      <span id="openLogLabel">查看完整日志</span>
+                      <svg class="ic ic-14 chev" aria-hidden="true"><use href="#i-chev"/></svg>
+                    </button>
+                  </div>
+                  <div class="loginset">
+                    <div class="logscroll">
+                      <div id="homeLog" role="log" aria-live="off" aria-label="最近运行日志" tabindex="0"></div>
+                    </div>
+                    <div class="skel" id="logSkel" hidden>
+                      <div class="skel-lines">
+                        <span class="skel-bar b-line"></span>
+                        <span class="skel-bar b-line"></span>
+                        <span class="skel-bar b-line"></span>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+              </div>
+            </div>
+          </section>
+
+          <!-- ================= 我的 ================= -->
+          <section class="page" id="page-me" data-page="me" hidden>
+            <h1 class="lt">我的</h1>
+
+            <section class="group">
+              <h2 class="gt">账号</h2>
+              <div class="card">
+                <div class="row">
+                  <span class="rl">学号</span>
+                  <span class="rv mono" style="font-size:17px;">2023123456</span>
+                </div>
+                <div class="row">
+                  <span class="rl">密码</span>
+                  <span class="rv">
+                    <span class="mono">••••••••</span>
+                    <span class="chip">
+                      <svg class="ic ic-14" aria-hidden="true"><use href="#i-lock"/></svg>已加密
+                    </span>
+                  </span>
+                </div>
+              </div>
+              <p class="foot-note">密码经 Windows DPAPI 加密后仅存于本机</p>
+            </section>
+
+            <section class="group">
+              <h2 class="gt">学校与认证</h2>
+              <div class="card">
+                <button class="row row-act" id="rowSchool" type="button">
+                  <span class="rl">当前学校</span>
+                  <span class="rv" id="meSchool">商丘应用科技学院 · YYKJXY</span>
+                  <svg class="ic ic-14 chev" aria-hidden="true"><use href="#i-chev"/></svg>
+                </button>
+                <div class="row">
+                  <span class="rl">认证服务器</span>
+                  <span class="rv rv-mono" id="meServer">10.10.1.101/eportal/</span>
+                </div>
+                <button class="row row-act" id="rowSwitchSchool" type="button">
+                  <span class="rl rl-strong" style="color:var(--a-text)">切换 / 新增学校配置</span>
+                  <span class="rv">
+                    <svg class="ic ic-14 chev" style="color:var(--a-text)" aria-hidden="true"><use href="#i-chev"/></svg>
+                  </span>
+                </button>
+              </div>
+            </section>
+
+            <section class="group">
+              <h2 class="gt">外观</h2>
+              <div class="card">
+                <div class="row">
+                  <span class="rl">主题</span>
+                  <div class="seg" id="themeSeg" role="radiogroup" aria-label="主题" style="--n:3;--i:2;width:208px;margin-left:auto">
+                    <span class="seg-ind" aria-hidden="true"></span>
+                    <button class="seg-item" role="radio" aria-checked="false" tabindex="-1" data-theme-val="light" type="button">浅色</button>
+                    <button class="seg-item" role="radio" aria-checked="false" tabindex="-1" data-theme-val="dark" type="button">深色</button>
+                    <button class="seg-item" role="radio" aria-checked="true" tabindex="0" data-theme-val="system" type="button">跟随系统</button>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </section>
+
+          <!-- ================= 设置 ================= -->
+          <section class="page" id="page-settings" data-page="settings" hidden>
+            <h1 class="lt">设置</h1>
+
+            <section class="group">
+              <h2 class="gt">连接</h2>
+              <div class="card">
+                <div class="row">
+                  <span class="rl" id="autoStartLabel">开机自动连接</span>
+                  <button class="switch" id="autoStart" role="switch" aria-checked="true"
+                          aria-labelledby="autoStartLabel" type="button" style="margin-left:auto">
+                    <span class="switch-thumb"></span>
+                  </button>
+                </div>
+                <div class="row">
+                  <span class="rl" id="autoReconnect2Label">断线自动重连</span>
+                  <button class="switch" id="autoReconnect2" role="switch" aria-checked="true"
+                          aria-labelledby="autoReconnect2Label" type="button" style="margin-left:auto">
+                    <span class="switch-thumb"></span>
+                  </button>
+                </div>
+                <div class="row">
+                  <span class="rl" id="intervalLabel">检测间隔</span>
+                  <span class="rv" style="gap:8px">
+                    <span class="num-wrap">
+                      <input class="num-edit" id="intervalInput" type="text" inputmode="numeric"
+                             value="20" aria-labelledby="intervalLabel" aria-describedby="intervalHint">
+                    </span>
+                    <span class="unit">秒</span>
+                  </span>
+                </div>
+              </div>
+              <p class="foot-note" id="intervalHint">取值范围 10–300 秒，保存后立即生效</p>
+            </section>
+
+            <section class="group">
+              <h2 class="gt">应用</h2>
+              <div class="card">
+                <div class="row">
+                  <span class="rl" id="trayLabel">最小化到托盘</span>
+                  <button class="switch" id="minToTray" role="switch" aria-checked="false"
+                          aria-labelledby="trayLabel" type="button" style="margin-left:auto">
+                    <span class="switch-thumb"></span>
+                  </button>
+                </div>
+                <button class="row row-act" id="rowLogDir" type="button">
+                  <span class="rl">运行日志</span>
+                  <span class="rv">打开目录</span>
+                  <svg class="ic ic-14 chev" aria-hidden="true"><use href="#i-chev"/></svg>
+                </button>
+              </div>
+            </section>
+
+            <section class="group">
+              <h2 class="gt">关于</h2>
+              <div class="card">
+                <div class="row">
+                  <span class="rl">开发者</span>
+                  <span class="rv">疯狂的阿豪</span>
+                </div>
+                <div class="row">
+                  <span class="rl">版本</span>
+                  <span class="rv">v1.1</span>
+                </div>
+                <div class="row">
+                  <span class="rl">发布</span>
+                  <span class="rv">2026-11-27 13:39</span>
+                </div>
+                <button class="row row-act" id="rowGithub" type="button">
+                  <span class="rl">GitHub</span>
+                  <span class="rv">
+                    <svg class="ic ic-14" style="color:var(--i-faint)" aria-hidden="true"><use href="#i-github"/></svg>
+                  </span>
+                  <svg class="ic ic-14 chev" aria-hidden="true"><use href="#i-chev"/></svg>
+                </button>
+                <div class="row">
+                  <span class="rl">开源协议</span>
+                  <span class="rv">MIT</span>
+                </div>
+              </div>
+            </section>
+
+            <!-- 演示（脚注级，仅演示用） -->
+            <section class="group demo" id="demoGroup">
+              <button class="demo-disc" id="demoDisc" aria-expanded="false" aria-controls="demoBody" type="button">
+                <span class="demo-disc-label">演示</span>
+                <span class="demo-disc-value" id="demoDiscValue">未连接</span>
+                <svg class="ic ic-14 chev" aria-hidden="true"><use href="#i-chev"/></svg>
+              </button>
+              <div class="demo-body" id="demoBody">
+                <div class="demo-chips" id="demoChips" role="group" aria-label="演示控件">
+                  <span class="demo-label">演示</span>
+                  <div class="chip-group">
+                    <button class="chip-btn" data-force="IDLE" aria-pressed="true" type="button">未连接</button>
+                    <button class="chip-btn" data-force="CONNECTING" aria-pressed="false" type="button">连接中</button>
+                    <button class="chip-btn" data-force="CONNECTED" aria-pressed="false" type="button">已连接</button>
+                    <button class="chip-btn" data-force="FAILED" aria-pressed="false" type="button">失败</button>
+                    <button class="chip-btn" data-force="PAUSED" aria-pressed="false" type="button">暂停</button>
+                  </div>
+                  <span class="demo-sep" aria-hidden="true"></span>
+                  <div class="chip-group">
+                    <button class="chip-btn" id="demoKindCred" type="button">凭据失败</button>
+                    <button class="chip-btn" id="demoKindSvc" type="button">服务异常</button>
+                    <button class="chip-btn" id="demoKindNet" type="button">网络不可达</button>
+                    <button class="chip-btn" id="demoPausedRetry" type="button">连续失败</button>
+                    <button class="chip-btn" id="demoPausedLocked" type="button">账号锁定</button>
+                    <button class="chip-btn" id="demoPausedArrears" type="button">账号欠费</button>
+                    <button class="chip-btn" id="demoNetDown" type="button">模拟断网</button>
+                  </div>
+                </div>
+                <p class="demo-note">仅演示用，不影响真实状态机</p>
+              </div>
+            </section>
+
+            <p class="page-foot">懒得连校园网 · MIT License</p>
+          </section>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab Bar -->
+    <nav class="tabbar" id="tabbar" role="tablist" aria-label="主导航">
+      <button class="tabbar-item" role="tab" aria-selected="true" data-nav="home" type="button">
+        <span class="tabbar-pill" aria-hidden="true"></span>
+        <svg class="ic" aria-hidden="true"><use href="#i-house"/></svg><span>主页</span>
+      </button>
+      <button class="tabbar-item" role="tab" aria-selected="false" data-nav="me" type="button">
+        <span class="tabbar-pill" aria-hidden="true"></span>
+        <svg class="ic" aria-hidden="true"><use href="#i-person"/></svg><span>我的</span>
+      </button>
+      <button class="tabbar-item" role="tab" aria-selected="false" data-nav="settings" type="button">
+        <span class="tabbar-pill" aria-hidden="true"></span>
+        <svg class="ic" aria-hidden="true"><use href="#i-gear"/></svg><span>设置</span>
+      </button>
+    </nav>
+  </div>
+</div>
+
+<!-- Toast 宿主 -->
+<div class="toast-host" id="toastHost"></div>
+
+<!-- Sheet：学校切换 -->
+<div class="scrim" id="sheetScrim" hidden></div>
+<div class="sheet" id="schoolSheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle" hidden>
+  <div class="sheet-handle" id="sheetHandle" aria-hidden="true"></div>
+  <h2 class="sheet-title" id="sheetTitle">切换学校</h2>
+  <div class="confirm-bar" id="switchConfirm" role="group" aria-label="切换确认">
+    <p class="confirm-text">切换学校会断开当前连接，需要重新认证</p>
+    <div class="confirm-actions">
+      <button class="mini-btn danger" id="confirmSwitch" type="button">确认切换</button>
+      <button class="mini-btn" id="cancelSwitch" type="button">取消</button>
+    </div>
+  </div>
+  <div class="sheet-body" id="sheetBody" role="group" aria-labelledby="sheetTitle">
+    <button class="sheet-row" data-school="0" aria-pressed="true" type="button">
+      <span class="sheet-row-main">
+        <span class="sheet-row-name">商丘应用科技学院</span>
+        <span class="sheet-row-code">YYKJXY · 当前</span>
+      </span>
+      <svg class="ic ic-20 check" aria-hidden="true"><use href="#i-check"/></svg>
+    </button>
+    <button class="sheet-row" data-school="1" aria-pressed="false" type="button">
+      <span class="sheet-row-main">
+        <span class="sheet-row-name">商丘学院</span>
+        <span class="sheet-row-code">SQXY</span>
+      </span>
+      <svg class="ic ic-20 check" aria-hidden="true"><use href="#i-check"/></svg>
+    </button>
+    <button class="sheet-row" data-school="new" type="button">
+      <span class="sheet-row-main">
+        <span class="sheet-row-name" style="color:var(--a-text)">新增配置…</span>
+        <span class="sheet-row-code">手动填写 Portal 地址</span>
+      </span>
+      <svg class="ic ic-20 chev" style="color:var(--a-text)" aria-hidden="true"><use href="#i-chev"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- 完整日志浮层 -->
+<div class="overlay" id="logPage" role="dialog" aria-modal="true" aria-labelledby="logPageTitle" hidden>
+  <div class="overlay-head">
+    <h2 class="overlay-title" id="logPageTitle">运行日志</h2>
+    <div class="overlay-actions">
+      <button class="text-btn" id="logClear" type="button">清空</button>
+      <button class="icon-btn" id="logClose" aria-label="关闭日志" type="button">
+        <svg class="ic ic-20" aria-hidden="true"><use href="#i-x"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="logview" id="logView" tabindex="0" role="log" aria-live="off" aria-relevant="additions"
+       aria-label="运行日志">
+    <div class="logview-inner" id="logInner"></div>
+  </div>
+  <button class="jump-pill" id="jumpPill" type="button">回到最新</button>
+</div>
+
+<div class="sr-only" id="live" role="status" aria-live="polite" aria-atomic="true"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ==========================================================
+     常量
+     ========================================================== */
+  var E = {
+    enter: 'cubic-bezier(.16,1,.30,1)',
+    exit: 'cubic-bezier(.70,0,.84,0)',
+    state: 'cubic-bezier(.32,.72,0,1)',
+    press: 'cubic-bezier(.40,0,.20,1)'
+  };
+  var RING_R = 60.5;
+  var RING_C = 2 * Math.PI * RING_R;
+  var LADDER = [12, 12, 20, 30, 45];
+  var MAX_FAIL = 5;
+  var MIN_DWELL = 600;
+  var MAX_LOGS = 200;
+  var SESSION_START = 2 * 3600 + 14 * 60 + 36;
+
+  var mqCompact = window.matchMedia('(max-width: 767px)');
+  var mqReduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var reduced = mqReduced.matches;
+
+  function $(id) { return document.getElementById(id); }
+  function el(sel, root) { return (root || document).querySelector(sel); }
+  function all(sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
+
+  function pad2(n) { return n < 10 ? '0' + n : '' + n; }
+  function fmtHMS(sec) {
+    var h = Math.floor(sec / 3600);
+    var m = Math.floor((sec % 3600) / 60);
+    var s = sec % 60;
+    return pad2(h) + ':' + pad2(m) + ':' + pad2(s);
+  }
+  function nowTime() {
+    var d = new Date();
+    return pad2(d.getHours()) + ':' + pad2(d.getMinutes()) + ':' + pad2(d.getSeconds());
+  }
+  function clamp(v, lo, hi) { return Math.min(hi, Math.max(lo, v)); }
+
+  /* ==========================================================
+     应用状态
+     ========================================================== */
+  var SCHOOLS = [
+    { name: '商丘应用科技学院', code: 'YYKJXY', portal: '10.10.1.101/eportal/' },
+    { name: '商丘学院', code: 'SQXY', portal: '10.10.2.1/eportal/' }
+  ];
+
+  var S = {
+    phase: 'IDLE',
+    schoolIdx: 0,
+    ip: '10.10.23.87',
+    serverIp: '10.10.1.101',
+    retryCount: 0,
+    netFailCount: 0,
+    reconnectCount: 3,
+    sessionSec: SESSION_START,
+    everConnected: false,
+    lastConnect: '今天 08:12',
+    autoReconnect: true,
+    autoStart: true,
+    minToTray: false,
+    interval: 20,
+    theme: 'system',
+    pausedReason: 'retry',
+    failKind: 'cred',
+    netDown: false,
+    cdTotal: 12,
+    cdLeft: 12,
+    connectStarted: 0,
+    spinStart: 0,
+    btnGate: true,
+    cooldown: false,
+    logs: []
+  };
+
+  var T = { session: null, countdown: null, heartbeat: null, phase: [], cool: null, gate: null, demo: [], skelA: null, skelB: null };
+
+  function clearTimers() {
+    if (T.session) { clearInterval(T.session); T.session = null; }
+    if (T.countdown) { clearInterval(T.countdown); T.countdown = null; }
+    if (T.heartbeat) { clearInterval(T.heartbeat); T.heartbeat = null; }
+    if (T.gate) { clearTimeout(T.gate); T.gate = null; }
+    T.phase.forEach(clearTimeout);
+    T.phase = [];
+  }
+
+  /* ==========================================================
+     日志
+     ========================================================== */
+  var homeLogEl = $('homeLog');
+  var homeLogScroll = el('.logscroll');
+  var logInnerEl = $('logInner');
+  var logViewEl = $('logView');
+
+  var logPending = 0;
+  var logFlushTimer = null;
+
+  /* 写入节流 100ms：同窗口内多条合并为一次插入 */
+  function log(msg) {
+    S.logs.unshift({ t: nowTime(), m: msg });
+    if (S.logs.length > MAX_LOGS) S.logs.length = MAX_LOGS;
+    logPending += 1;
+    if (logFlushTimer) return;
+    logFlushTimer = setTimeout(function () {
+      logFlushTimer = null;
+      var n = logPending;
+      logPending = 0;
+      renderHomeLog(n);
+      if (!logPageEl.hidden) { renderLogView(); scheduleAutoScroll(); }
+    }, 100);
+  }
+
+  function renderHomeLog(newCount) {
+    var lines = S.logs.slice(0, mqCompact.matches ? 3 : 5);
+    if (!lines.length) {
+      homeLogEl.innerHTML = '';
+      var empty = document.createElement('div');
+      empty.className = 'logempty';
+      empty.textContent = '暂无运行日志';
+      homeLogEl.appendChild(empty);
+      return;
+    }
+    homeLogEl.innerHTML = '';
+    lines.forEach(function (item, i) {
+      var row = document.createElement('div');
+      row.className = 'logline';
+      var t = document.createElement('span');
+      t.className = 'lt-time';
+      t.textContent = item.t;
+      var m = document.createElement('span');
+      m.className = 'lt-msg';
+      m.textContent = item.m;
+      row.appendChild(t);
+      row.appendChild(m);
+      if (i < newCount && !reduced) {
+        row.classList.add('enter');
+        row.style.animationDelay = (i * 40) + 'ms';
+      }
+      homeLogEl.appendChild(row);
+    });
+    if (!mqCompact.matches && homeLogScroll) {
+      var dist = homeLogScroll.scrollHeight - homeLogScroll.scrollTop - homeLogScroll.clientHeight;
+      if (dist <= 24) homeLogScroll.scrollTop = homeLogScroll.scrollHeight;
+    }
+  }
+
+  /* ==========================================================
+     完整日志：虚拟列表（行高 18，窗口 40 + 上下缓冲 10，DOM ≤ 60）
+     ========================================================== */
+  var LOG_ROW_H = 18;
+  var logPageEl = $('logPage');
+  var jumpPill = $('jumpPill');
+  var logFollow = true;
+  var logRenderQueued = false;
+
+  function logRows() {
+    return S.logs.slice().reverse();
+  }
+
+  function renderLogView() {
+    var rows = logRows();
+    var total = rows.length;
+    if (!total) {
+      logInnerEl.style.height = '';
+      logInnerEl.innerHTML =
+        '<div class="logpage-empty">' +
+        '<svg class="ic" style="width:40px;height:40px;color:var(--t-4)" aria-hidden="true"><use href="#i-list"/></svg>' +
+        '<span>暂无运行日志</span><span class="sub">连接后这里会显示认证过程</span></div>';
+      return;
+    }
+    logInnerEl.style.height = (total * LOG_ROW_H) + 'px';
+    var st = logViewEl.scrollTop;
+    var vh = logViewEl.clientHeight || 400;
+    var start = clamp(Math.floor(st / LOG_ROW_H) - 10, 0, Math.max(0, total));
+    var end = clamp(Math.ceil((st + vh) / LOG_ROW_H) + 10, 0, total);
+    var frag = document.createDocumentFragment();
+    for (var i = start; i < end; i++) {
+      var r = document.createElement('div');
+      r.className = 'logrow';
+      r.style.top = (i * LOG_ROW_H) + 'px';
+      var t = document.createElement('span');
+      t.className = 'lt-time';
+      t.textContent = rows[i].t;
+      var m = document.createElement('span');
+      m.className = 'lt-msg';
+      m.textContent = rows[i].m;
+      r.appendChild(t);
+      r.appendChild(m);
+      frag.appendChild(r);
+    }
+    logInnerEl.innerHTML = '';
+    logInnerEl.appendChild(frag);
+  }
+
+  function queueLogRender() {
+    if (logRenderQueued) return;
+    logRenderQueued = true;
+    requestAnimationFrame(function () {
+      logRenderQueued = false;
+      renderLogView();
+    });
+  }
+
+  function scheduleAutoScroll() {
+    if (!logFollow) return;
+    requestAnimationFrame(function () {
+      logViewEl.scrollTop = logViewEl.scrollHeight;
+      renderLogView();
+    });
+  }
+
+  logViewEl.addEventListener('scroll', function () {
+    var dist = logViewEl.scrollHeight - logViewEl.scrollTop - logViewEl.clientHeight;
+    logFollow = dist <= 24;
+    jumpPill.classList.toggle('show', !logFollow);
+    queueLogRender();
+  }, { passive: true });
+
+  jumpPill.addEventListener('click', function () {
+    logFollow = true;
+    jumpPill.classList.remove('show');
+    logViewEl.scrollTo({ top: logViewEl.scrollHeight, behavior: reduced ? 'auto' : 'smooth' });
+    setTimeout(renderLogView, 280);
+  });
+
+  $('logClear').addEventListener('click', function () {
+    S.logs = [];
+    renderLogView();
+    renderHomeLog(0);
+  });
+
+  var logFocus = null;
+  var appEl = el('.app');
+
+  function openLogPage() {
+    logFocus = document.activeElement;
+    logPageEl.hidden = false;
+    appEl.setAttribute('inert', '');
+    logFollow = true;
+    if (!reduced) {
+      logPageEl.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 220, easing: E.enter });
+    }
+    renderLogView();
+    logViewEl.scrollTop = logViewEl.scrollHeight;
+    renderLogView();
+    logViewEl.focus({ preventScroll: true });
+  }
+
+  function closeLogPage() {
+    logPageEl.hidden = true;
+    appEl.removeAttribute('inert');
+    restoreFocus(logFocus);
+  }
+
+  $('logClose').addEventListener('click', closeLogPage);
+  $('openLog').addEventListener('click', openLogPage);
+
+  logPageEl.addEventListener('keydown', function (e) {
+    if (e.key !== 'Tab') return;
+    var items = all('button, [tabindex]:not([tabindex="-1"])', logPageEl)
+      .filter(function (n) { return n.offsetParent !== null; });
+    if (!items.length) return;
+    var first = items[0];
+    var last = items[items.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  });
+
+  /* ==========================================================
+     数字滚动（跳变才用）—— ux §3.5
+     ========================================================== */
+  function setRoll(node, text, animate) {
+    if (node.textContent === text) return;
+    if (!animate || reduced) { node.textContent = text; return; }
+    var prev = node.textContent;
+    node.textContent = '';
+    var cols = [];
+    for (var i = 0; i < text.length; i++) {
+      var col = document.createElement('span');
+      col.className = 'dcol';
+      var a = document.createElement('span');
+      a.className = 'dch';
+      a.textContent = prev.charAt(i) || '';
+      var b = document.createElement('span');
+      b.className = 'dch';
+      b.textContent = text.charAt(i);
+      col.appendChild(a);
+      col.appendChild(b);
+      node.appendChild(col);
+      cols.push(col);
+    }
+    cols.forEach(function (col, idx) {
+      setTimeout(function () {
+        col.animate(
+          [{ transform: 'translateY(0)' }, { transform: 'translateY(-50%)' }],
+          { duration: 320, easing: E.state, fill: 'forwards' }
+        );
+      }, idx * 30);
+    });
+    setTimeout(function () { node.textContent = text; }, 320 + cols.length * 30 + 20);
+  }
+
+  function pulse(node) {
+    if (reduced) return;
+    node.animate([{ opacity: 0.72 }, { opacity: 1 }], { duration: 80, easing: E.state });
+  }
+
+  function crossFade(node, apply) {
+    node.getAnimations().forEach(function (a) { a.cancel(); });
+    if (reduced) {
+      apply();
+      node.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 100, easing: E.enter });
+      return;
+    }
+    var token = (node.__cf = (node.__cf || 0) + 1);
+    var done = false;
+    function commit() {
+      if (done || node.__cf !== token) return;
+      done = true;
+      apply();
+      node.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 160, easing: E.enter, delay: 80 });
+    }
+    node.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 120, easing: E.exit }).onfinish = commit;
+    setTimeout(commit, 200);
+  }
+
+  /* 帧率守卫：连续 3 帧 >24ms 一次性降级（光晕呼吸 / 入场错峰），不恢复 */
+  var frameSlow = 0;
+  var frameDone = false;
+  var frameLast = 0;
+
+  function frameWatch(t) {
+    if (frameLast) {
+      var dt = t - frameLast;
+      frameSlow = dt > 24 ? frameSlow + 1 : 0;
+      if (frameSlow >= 3 && !frameDone) {
+        frameDone = true;
+        document.documentElement.classList.add('perf-lite');
+        return;
+      }
+    }
+    frameLast = t;
+    requestAnimationFrame(frameWatch);
+  }
+
+  /* 入场动画：结束后立即 cancel，避免窗口隐藏/动画暂停时元素停在首帧 */
+  function enterAnim(node, delay, offset) {
+    if (reduced) {
+      var a0 = node.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 120, easing: E.enter, delay: delay });
+      a0.onfinish = function () { a0.cancel(); };
+      setTimeout(function () { a0.cancel(); }, delay + 260);
+      return;
+    }
+    var a = node.animate(
+      [{ opacity: 0, transform: 'translateY(' + (offset || 12) + 'px)' },
+       { opacity: 1, transform: 'translateY(0)' }],
+      { duration: 220, easing: E.enter, delay: frameDone ? 0 : delay, fill: 'both' }
+    );
+    a.onfinish = function () { a.cancel(); };
+    setTimeout(function () { a.cancel(); }, delay + 400);
+  }
+
+  /* ==========================================================
+     骨架屏：仅数据块与日志；状态卡永不骨架化
+     双阈值 —— >200ms 静态块，>600ms 才扫光；≤200ms 直接出内容
+     ========================================================== */
+  function showSkeleton() {
+    all('.skel').forEach(function (n) { n.hidden = false; n.style.opacity = '1'; });
+    all('.dg-cell').forEach(function (c) { c.classList.add('is-loading'); });
+  }
+
+  function armSkeleton() {
+    T.skelA = setTimeout(showSkeleton, 200);
+    T.skelB = setTimeout(function () {
+      all('.skel').forEach(function (n) { n.classList.add('shimmer'); });
+    }, 600);
+  }
+
+  function disarmSkeleton() {
+    if (T.skelA) { clearTimeout(T.skelA); T.skelA = null; }
+    if (T.skelB) { clearTimeout(T.skelB); T.skelB = null; }
+    var nodes = all('.skel');
+    nodes.forEach(function (n) { n.style.opacity = '0'; });
+    all('.dg-cell').forEach(function (c) { c.classList.remove('is-loading'); });
+    setTimeout(function () {
+      nodes.forEach(function (n) { n.hidden = true; n.classList.remove('shimmer'); });
+    }, 140);
+  }
+
+  /* ==========================================================
+     状态卡渲染
+     ========================================================== */
+  var card = $('statusCard');
+  var ringSvg = $('ringSvg');
+  var ringRotor = $('ringRotor');
+  var ringArc = $('ringArc');
+  var ringTime = $('ringTime');
+  var titleTextEl = $('scTitleText');
+  var subEl = $('scSub');
+  var schoolEl = $('scSchool');
+  var btn = $('scBtn');
+  var btnLabel = $('scBtnLabel');
+  var cdText = $('cdText');
+  var cdNum = cdText.querySelector('b');
+  var cdBar = $('cdBar');
+  var liveEl = $('live');
+  var dgSession = $('dgSession');
+  var dgIp = $('dgIp');
+  var dgServer = $('dgServer');
+  var dgRetry = $('dgRetry');
+
+  /* FAILED 按 kind 分流；PAUSED 按原因分流（视觉 §6.3.2 / §6.3.3） */
+  var FAIL_META = {
+    credential: {
+      title: '认证失败',
+      text: function (n) { return '账号或密码不正确 · 第 ' + n + '/' + MAX_FAIL + ' 次重试'; },
+      log: '账号或密码不正确'
+    },
+    portal_service: {
+      title: '认证失败',
+      text: function (n) { return 'Portal 服务异常 · 第 ' + n + '/' + MAX_FAIL + ' 次重试'; },
+      log: 'Portal 服务异常'
+    },
+    network: {
+      title: '网络不可达',
+      text: function (n) { return '未连接到校园网 · 网络失败 ' + n + '/' + MAX_FAIL; },
+      log: '网络不可达'
+    }
+  };
+
+  var PAUSE_META = {
+    retry: { title: '自动重连已暂停', text: '连续失败 ' + MAX_FAIL + ' 次，已停止自动重试', tone: 'warn', label: '恢复重连' },
+    locked: { title: '账号已被锁定', text: '多次认证未通过，请联系网络中心', tone: 'neutral', label: '重新检测' },
+    arrears: { title: '账号已欠费', text: '请联系网络中心缴费', tone: 'neutral', label: '重新检测' }
+  };
+
+  function metaFor(phase) {
+    if (phase === 'IDLE') return { title: '未连接', ring: 'idle', arc: 0, tone: 'primary', label: '连接' };
+    if (phase === 'CONNECTING') return { title: '正在连接', ring: 'busy', arc: 0.75, tone: 'ghost', label: '取消' };
+    if (phase === 'CONNECTED') return { title: '已连接', ring: 'ok', arc: 1, tone: 'secondary', label: '重新连接' };
+    if (phase === 'FAILED') {
+      var fm = FAIL_META[S.failKind] || FAIL_META.credential;
+      return { title: fm.title, ring: 'danger', arc: 0.4, tone: 'primary', label: '重新连接' };
+    }
+    var pm = PAUSE_META[S.pausedReason] || PAUSE_META.retry;
+    return { title: pm.title, ring: 'paused', arc: 0.4, tone: pm.tone, label: pm.label };
+  }
+
+  function failCount() {
+    return S.failKind === 'network' ? S.netFailCount : S.retryCount;
+  }
+
+  function subTextFor(phase) {
+    if (phase === 'IDLE') return S.lastConnect ? '上次连接 ' + S.lastConnect : '尚未连接过';
+    if (phase === 'CONNECTED') return 'IP ' + S.ip + ' · 会话 ' + fmtHMS(S.sessionSec);
+    if (phase === 'FAILED') {
+      var fm = FAIL_META[S.failKind] || FAIL_META.credential;
+      return fm.text(failCount());
+    }
+    if (phase === 'PAUSED') return (PAUSE_META[S.pausedReason] || PAUSE_META.retry).text;
+    return '正在检测网络';
+  }
+
+  /* 离开 CONNECTING 时冻结当前旋转相位，避免环「弹回 12 点重画」（ux §3.5） */
+  function freezeSpin() {
+    if (!ringSvg.classList.contains('spin')) return;
+    var deg = S.spinStart ? ((performance.now() - S.spinStart) % 1200) / 1200 * 360 : 0;
+    ringSvg.classList.remove('spin');
+    ringRotor.style.transform = 'rotate(' + deg.toFixed(2) + 'deg)';
+  }
+
+  function applyPhase(phase, prev) {
+    var meta = metaFor(phase);
+    var changed = !!prev && prev !== phase;
+
+    card.dataset.state = phase;
+    card.dataset.ring = meta.ring;
+    card.dataset.pause = S.pausedReason;
+
+    /* 按钮先换（t=0，早于环）；文案只用 2 字 / 4 字档 */
+    btn.className = 'btn btn-' + meta.tone + (phase === 'CONNECTING' ? ' is-loading' : '');
+    btnLabel.textContent = meta.label;
+    btn.setAttribute('aria-busy', phase === 'CONNECTING' ? 'true' : 'false');
+    btn.setAttribute('aria-label', phase === 'CONNECTING' ? '正在连接，可取消' : meta.label);
+
+    /* 旋转相位：进 CONNECTING 从 0 起转，离开时冻结当前角度 */
+    if (phase === 'CONNECTING') {
+      ringRotor.style.transform = '';
+      card.dataset.glow = '1';
+      if (!reduced) { ringSvg.classList.add('spin'); S.spinStart = performance.now(); }
+      else { ringSvg.classList.remove('spin'); S.spinStart = 0; }
+    } else {
+      freezeSpin();
+    }
+
+    /* 环形态 */
+    ringArc.style.strokeDasharray = (RING_C * meta.arc).toFixed(2) + ' ' + RING_C.toFixed(2);
+
+    /* 标题 cross-fade（首次渲染直接落字） */
+    if (changed) {
+      crossFade(titleTextEl, function () { titleTextEl.textContent = meta.title; });
+    } else {
+      titleTextEl.textContent = meta.title;
+    }
+
+    /* 副行：CONNECTING 的副行由阶段推进器管理 */
+    if (phase !== 'CONNECTING') setSub(subTextFor(phase), changed);
+
+    /* 倒计时区 */
+    if (phase !== 'FAILED') cdBar.style.transform = 'scaleX(0)';
+
+    /* 环心时长 */
+    ringTime.textContent = fmtHMS(S.sessionSec);
+
+    /* 播报（唯一 live region，只在状态变化时更新） */
+    if (changed) {
+      liveEl.setAttribute('aria-live', (phase === 'FAILED' || phase === 'PAUSED') ? 'assertive' : 'polite');
+      liveEl.textContent = meta.title + '。' + subTextFor(phase);
+    }
+
+    syncDemoChips();
+  }
+
+  var subToken = 0;
+
+  function setSub(text, fade) {
+    if (subEl.textContent === text) return;
+    subToken += 1;
+    var my = subToken;
+    subEl.getAnimations().forEach(function (a) { a.cancel(); });
+    if (!fade || reduced) {
+      subEl.textContent = text;
+      return;
+    }
+    var done = false;
+    function commit() {
+      if (done || my !== subToken) return;
+      done = true;
+      subEl.textContent = text;
+      subEl.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 160, easing: E.enter, delay: 80 });
+    }
+    subEl.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 120, easing: E.exit }).onfinish = commit;
+    setTimeout(commit, 200);
+  }
+
+  /* ==========================================================
+     状态机
+     ========================================================== */
+  function setPhase(phase) {
+    var prev = S.phase;
+    if (prev === phase) return;
+    S.phase = phase;
+    applyPhase(phase, prev);
+  }
+
+  function startSession() {
+    if (T.session) { clearInterval(T.session); T.session = null; }
+    T.session = setInterval(function () {
+      S.sessionSec += 1;
+      var txt = fmtHMS(S.sessionSec);
+      ringTime.textContent = txt;
+      if (dgSession.textContent !== txt) {
+        dgSession.textContent = txt;
+        pulse(dgSession);
+      }
+      if (S.phase === 'CONNECTED') {
+        setSub('IP ' + S.ip + ' · 会话 ' + txt, false);
+      }
+    }, 1000);
+  }
+
+  function heartbeatCheck() {
+    if (!S.netDown) return false;
+    S.netDown = false;
+    disconnect();
+    return true;
+  }
+
+  function startHeartbeat() {
+    if (T.heartbeat) { clearInterval(T.heartbeat); T.heartbeat = null; }
+    T.heartbeat = setInterval(heartbeatCheck, Math.max(10, S.interval) * 1000);
+  }
+
+  function enterConnecting(fromDisconnect, isRetry) {
+    var prev = S.phase;
+    clearTimers();
+    S.connectStarted = performance.now();
+    S.btnGate = false;
+    S.phase = 'CONNECTING';
+
+    if (isRetry) {
+      S.reconnectCount += 1;
+      setRoll(dgRetry, String(S.reconnectCount), true);
+    }
+
+    applyPhase('CONNECTING', prev === 'CONNECTING' ? '' : prev);
+    log(fromDisconnect ? '网络已断开，开始重连' : '开始认证');
+
+    /* S1 同帧：副行 S1 + glow ×0.6 */
+    var s1 = fromDisconnect ? '网络已断开，正在重连' : '正在检测网络';
+    setSub(s1, prev !== 'CONNECTING');
+    card.dataset.glow = '1';
+
+    /* S2 取址：副行换文案 + glow ×0.8（80ms 单跳，非循环） */
+    T.phase.push(setTimeout(function () {
+      setSub('已获取地址 ' + S.ip, true);
+      card.dataset.glow = '2';
+      dgIp.textContent = S.ip;
+      pulse(dgIp);
+    }, 900));
+
+    /* S3 提交：副行换文案 + glow ×1.0 */
+    T.phase.push(setTimeout(function () {
+      setSub('正在提交认证', true);
+      card.dataset.glow = '3';
+    }, 1400));
+
+    T.phase.push(setTimeout(function () { settle({ ok: true }); }, 2600));
+
+    T.gate = setTimeout(function () { S.btnGate = true; }, 400);
+  }
+
+  /* CONNECTING 最短驻留 600ms：成功与失败走同一条守卫，只约束自动转移 */
+  function settle(result) {
+    var wait = MIN_DWELL - (performance.now() - S.connectStarted);
+    if (wait > 0) {
+      T.phase.push(setTimeout(function () { applyResult(result); }, wait));
+      return;
+    }
+    applyResult(result);
+  }
+
+  function applyResult(result) {
+    if (result.ok) { succeed(); return; }
+
+    var kind = result.kind;
+    S.failKind = kind;
+
+    if (kind === 'account_locked' || kind === 'account_arrears') {
+      enterPaused(kind === 'account_locked' ? 'locked' : 'arrears', true);
+      return;
+    }
+
+    if (kind === 'network') S.netFailCount += 1;
+    else S.retryCount += 1;
+
+    var n = failCount();
+    var fm = FAIL_META[kind] || FAIL_META.credential;
+    log('认证失败：' + fm.log + (kind === 'network' ? ' · 网络失败 ' + n : ' · 第 ' + n + ' 次'));
+
+    if (n >= MAX_FAIL) { enterPaused('retry', true); return; }
+
+    var wasFailed = S.phase === 'FAILED';
+    setPhase('FAILED');
+    if (wasFailed) subEl.textContent = subTextFor('FAILED');
+    startCountdown(n);
+  }
+
+  function succeed() {
+    var elapsed = ((performance.now() - S.connectStarted) / 1000).toFixed(1);
+    clearTimers();
+    S.retryCount = 0;
+    S.netFailCount = 0;
+    S.ip = '10.10.23.87';
+    dgIp.textContent = S.ip;
+
+    if (!S.everConnected) {
+      S.everConnected = true;
+      S.sessionSec = SESSION_START;
+      dgSession.textContent = fmtHMS(S.sessionSec);
+    } else {
+      S.sessionSec = 0;
+      setRoll(dgSession, fmtHMS(0), true);
+    }
+    ringTime.textContent = fmtHMS(S.sessionSec);
+
+    setPhase('CONNECTED');
+    startSession();
+    startHeartbeat();
+
+    var t = nowTime();
+    S.logs.unshift({ t: t, m: '认证成功 · 耗时 ' + elapsed + 's' });
+    S.logs.unshift({ t: t, m: '已获取 IP ' + S.ip });
+    S.logs.unshift({ t: t, m: '检测到 SSID ' + SCHOOLS[S.schoolIdx].code + '-Student' });
+    if (S.logs.length > MAX_LOGS) S.logs.length = MAX_LOGS;
+    renderHomeLog(3);
+    if (!logPageEl.hidden) { renderLogView(); scheduleAutoScroll(); }
+  }
+
+  function fail(kind) {
+    clearTimers();
+    settle({ kind: kind });
+  }
+
+  function enterPaused(reason, notify) {
+    clearTimers();
+    S.pausedReason = reason;
+    setPhase('PAUSED');
+    if (reason === 'retry') log('连续失败 ' + MAX_FAIL + ' 次，已暂停自动重连');
+    else if (reason === 'arrears') log('账号已欠费，已暂停自动重连');
+    else log('账号已被锁定，已暂停自动重连');
+    if (notify) showToast({ msg: '自动重连已暂停', tone: 'info', duration: 2600, key: 'paused', quiet: true });
+  }
+
+  function startCountdown(n) {
+    var idx = clamp(n, 1, LADDER.length) - 1;
+    S.cdTotal = LADDER[idx];
+    S.cdLeft = S.cdTotal;
+    renderCountdown(true);
+    if (T.countdown) clearInterval(T.countdown);
+    T.countdown = setInterval(function () {
+      S.cdLeft -= 1;
+      if (S.cdLeft <= 0) {
+        clearInterval(T.countdown);
+        T.countdown = null;
+        S.cdLeft = 0;
+        renderCountdown();
+        onCountdownEnd();
+        return;
+      }
+      renderCountdown();
+    }, 1000);
+  }
+
+  function renderCountdown(instant) {
+    var n = Math.max(1, S.cdLeft);
+    cdNum.textContent = String(n);
+    cdBar.setAttribute('aria-valuemax', String(S.cdTotal));
+    cdBar.setAttribute('aria-valuenow', String(S.cdLeft));
+    cdBar.setAttribute('aria-valuetext', n + ' 秒后自动重试');
+
+    var scale = reduced
+      ? Math.ceil((S.cdLeft / S.cdTotal) * 12) / 12
+      : S.cdLeft / S.cdTotal;
+
+    if (instant || reduced) {
+      cdBar.style.transition = 'none';
+      cdBar.style.transform = 'scaleX(' + scale + ')';
+      void cdBar.offsetWidth;
+      if (!reduced) cdBar.style.transition = '';
+    } else {
+      cdBar.style.transition = '';
+      cdBar.style.transform = 'scaleX(' + scale + ')';
+    }
+  }
+
+  function onCountdownEnd() {
+    if (S.autoReconnect) {
+      log('第 ' + failCount() + ' 次自动重试');
+      enterConnecting(false, true);
+    } else {
+      log('自动重连已关闭，已停止重试');
+      S.lastConnect = '今天 ' + nowTime().slice(0, 5);
+      setPhase('IDLE');
+    }
+  }
+
+  function disconnect() {
+    clearTimers();
+    log('检测到断网');
+    if (S.autoReconnect) {
+      S.retryCount = 0;
+      S.netFailCount = 0;
+      enterConnecting(true, true);
+    } else {
+      log('网络已断开（自动重连已关闭）');
+      S.lastConnect = '今天 ' + nowTime().slice(0, 5);
+      setPhase('IDLE');
+    }
+  }
+
+  function resume() {
+    S.retryCount = 0;
+    S.netFailCount = 0;
+    log('已恢复自动重连');
+    enterConnecting(false, true);
+  }
+
+  function cancelConnect() {
+    clearTimers();
+    log('已取消认证');
+    setPhase('IDLE');
+  }
+
+  function manualReconnect() {
+    clearTimers();
+    if (S.phase === 'CONNECTED') {
+      log('手动重新连接');
+      S.retryCount = 0;
+      S.netFailCount = 0;
+    } else if (S.phase === 'FAILED') {
+      log('手动重试');
+    }
+    enterConnecting(false, true);
+  }
+
+  /* 按钮 */
+  function onMainButton() {
+    if (S.cooldown) return;
+    if (S.phase === 'CONNECTING' && !S.btnGate) return;
+
+    var action = S.phase;
+    S.cooldown = true;
+    if (T.cool) clearTimeout(T.cool);
+    T.cool = setTimeout(function () { S.cooldown = false; }, 600);
+
+    if (action === 'IDLE') {
+      S.retryCount = 0;
+      S.netFailCount = 0;
+      enterConnecting(false);
+    } else if (action === 'CONNECTING') {
+      cancelConnect();
+    } else if (action === 'CONNECTED') {
+      manualReconnect();
+    } else if (action === 'FAILED') {
+      manualReconnect();
+    } else if (action === 'PAUSED') {
+      resume();
+    }
+  }
+  btn.addEventListener('click', onMainButton);
+
+  /* ==========================================================
+     Toast 队列（1 可见 + 1 排队）
+     ========================================================== */
+  var toastHost = $('toastHost');
+  var toastEl = null;
+  var toastTimer = null;
+  var toastQueue = [];
+  var toastCurrent = null;
+  var toastShownAt = 0;
+  var toastRemain = 0;
+  var ICON_INFO = '<svg class="ic ic-20" aria-hidden="true"><use href="#i-info"/></svg>';
+  var ICON_ALERT = '<svg class="ic ic-20" aria-hidden="true"><use href="#i-alert"/></svg>';
+  var ICON_CHECK = '<svg class="ic ic-20" aria-hidden="true"><use href="#i-check"/></svg>';
+
+  function buildToast(cfg) {
+    var node = document.createElement('div');
+    node.className = 'toast';
+    if (!cfg.quiet) node.setAttribute('role', 'status');
+    var icon = cfg.tone === 'error' ? ICON_ALERT : (cfg.tone === 'success' ? ICON_CHECK : ICON_INFO);
+    var iconWrap = document.createElement('span');
+    iconWrap.className = 'toast-icon';
+    iconWrap.innerHTML = icon;
+    var text = document.createElement('span');
+    text.className = 'toast-text';
+    text.textContent = cfg.msg;
+    node.appendChild(iconWrap);
+    node.appendChild(text);
+    if (cfg.action) {
+      var act = document.createElement('button');
+      act.className = 'toast-action';
+      act.type = 'button';
+      act.textContent = cfg.action.label;
+      act.addEventListener('click', function () {
+        hideToast(true);
+        cfg.action.onClick();
+      });
+      node.appendChild(act);
+    }
+    node.addEventListener('mouseenter', function () {
+      if (toastTimer) { clearTimeout(toastTimer); toastTimer = null; }
+    });
+    node.addEventListener('mouseleave', function () {
+      if (toastCurrent === cfg) startToastTimer(toastRemain);
+    });
+    return node;
+  }
+
+  function startToastTimer(ms) {
+    if (toastTimer) clearTimeout(toastTimer);
+    toastRemain = ms;
+    toastTimer = setTimeout(function () {
+      hideToast(false);
+    }, ms);
+  }
+
+  function showToast(cfg) {
+    var duration = cfg.duration || 2600;
+    cfg.duration = duration;
+
+    if (toastCurrent && cfg.key && toastCurrent.key === cfg.key &&
+        performance.now() - toastShownAt < 500) {
+      var txt = toastEl.querySelector('.toast-text');
+      if (txt) txt.textContent = cfg.msg;
+      startToastTimer(duration);
+      toastShownAt = performance.now();
+      return;
+    }
+
+    if (toastCurrent) {
+      if (toastQueue.length >= 1) toastQueue.shift();
+      toastQueue.push(cfg);
+      return;
+    }
+    playToast(cfg);
+  }
+
+  function playToast(cfg) {
+    toastCurrent = cfg;
+    toastEl = buildToast(cfg);
+    toastHost.innerHTML = '';
+    toastHost.appendChild(toastEl);
+    toastShownAt = performance.now();
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () { toastEl.classList.add('show'); });
+    });
+    startToastTimer(cfg.duration);
+  }
+
+  function hideToast(immediate) {
+    if (!toastCurrent) return;
+    if (toastTimer) { clearTimeout(toastTimer); toastTimer = null; }
+    var node = toastEl;
+    var current = toastCurrent;
+    toastCurrent = null;
+    toastShownAt = 0;
+    node.classList.add('out');
+    node.classList.remove('show');
+    var done = function () {
+      if (node.parentNode) node.parentNode.removeChild(node);
+      if (current === toastCurrent) toastEl = null;
+      if (toastQueue.length) {
+        var next = toastQueue.shift();
+        setTimeout(function () { playToast(next); }, reduced ? 0 : 120);
+      }
+    };
+    if (immediate || reduced) { setTimeout(done, 20); } else { setTimeout(done, 180); }
+  }
+
+  /* ==========================================================
+     导航
+     ========================================================== */
+  var PAGES = { home: $('page-home'), me: $('page-me'), settings: $('page-settings') };
+  var PAGE_TITLE = { home: '主页', me: '我的', settings: '设置' };
+  var currentPage = 'home';
+  var hasEntered = {};
+  var topbarTitle = $('topbarTitle');
+  var scroller = $('scroller');
+
+  function go(page, skipEnter) {
+    if (!PAGES[page]) return;
+    currentPage = page;
+    Object.keys(PAGES).forEach(function (k) { PAGES[k].hidden = k !== page; });
+
+    all('[data-nav]').forEach(function (n) {
+      var on = n.dataset.nav === page;
+      if (n.classList.contains('nav-item')) {
+        if (on) n.setAttribute('aria-current', 'page'); else n.removeAttribute('aria-current');
+      } else {
+        n.setAttribute('aria-selected', on ? 'true' : 'false');
+        n.setAttribute('tabindex', on ? '0' : '-1');
+      }
+    });
+
+    topbarTitle.textContent = PAGE_TITLE[page];
+
+    var node = PAGES[page];
+    var compact = mqCompact.matches;
+
+    if (!skipEnter) {
+      if (!reduced) {
+        var a1 = node.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 220, easing: E.enter });
+        var a2 = node.animate(
+          [{ transform: 'translateY(' + (compact ? 4 : 8) + 'px)' }, { transform: 'translateY(0)' }],
+          { duration: compact ? 220 : 320, easing: E.enter }
+        );
+        var clearPage = function () { a1.cancel(); a2.cancel(); };
+        a1.onfinish = clearPage;
+        setTimeout(clearPage, 500);
+      }
+      if (!hasEntered[page]) {
+        hasEntered[page] = true;
+        var kids = all('.card, .dg, .status-card, .group', node).slice(0, 5);
+        kids.forEach(function (c, i) { enterAnim(c, i * 40, 12); });
+      }
+    } else {
+      hasEntered[page] = true;
+    }
+
+    scroller.scrollTop = 0;
+    updateTopbarTitle(0);
+  }
+
+  all('[data-nav]').forEach(function (n) {
+    n.addEventListener('click', function () { go(n.dataset.nav); });
+  });
+  all('#sideNav .nav-item').forEach(function (n, i, arr) {
+    n.addEventListener('keydown', function (e) {
+      var next = null;
+      if (e.key === 'ArrowDown') next = arr[(i + 1) % arr.length];
+      if (e.key === 'ArrowUp') next = arr[(i - 1 + arr.length) % arr.length];
+      if (next) { e.preventDefault(); next.focus(); }
+    });
+  });
+
+  /* Topbar / Large Title 折叠 —— ux §3.2 */
+  var topbar = $('topbar');
+  var snapLock = 0;
+
+  function updateTopbarTitle(y) {
+    var centered = mqCompact.matches ? 'translateX(-50%) ' : '';
+    var lt = el('.lt', PAGES[currentPage]);
+    var p = clamp(y / 32, 0, 1);
+    if (lt) {
+      lt.style.opacity = String(1 - clamp(y / 24, 0, 1));
+      lt.style.transform = 'translateY(' + (-8 * p) + 'px)';
+    }
+    var inline = clamp((y - 24) / 8, 0, 1);
+    topbarTitle.style.opacity = String(inline);
+    topbarTitle.style.transform = centered + 'translateY(' + (4 * (1 - inline)) + 'px)';
+    topbar.classList.toggle('solid', y > 24);
+  }
+
+  function onScroll() {
+    updateTopbarTitle(scroller.scrollTop);
+  }
+
+  scroller.addEventListener('scroll', function () {
+    onScroll();
+    if (snapLock) return;
+    clearTimeout(scroller.__snapT);
+    scroller.__snapT = setTimeout(snapTitle, 110);
+  }, { passive: true });
+
+  function snapTitle() {
+    if (reduced) return;
+    var y = scroller.scrollTop;
+    if (y > 26 && y < 32) tweenScroll(32);
+    else if (y > 24 && y <= 26) tweenScroll(24);
+  }
+
+  function tweenScroll(target) {
+    var from = scroller.scrollTop;
+    if (Math.abs(from - target) < 0.5) return;
+    snapLock = 1;
+    var start = performance.now();
+    var dur = reduced ? 1 : 80;
+    (function step(t) {
+      var k = Math.min(1, (t - start) / dur);
+      scroller.scrollTop = from + (target - from) * k;
+      if (k < 1) requestAnimationFrame(step);
+      else { snapLock = 0; onScroll(); }
+    })(start);
+  }
+
+  /* ==========================================================
+     开关
+     ========================================================== */
+  function setSwitch(node, on) {
+    node.setAttribute('aria-checked', on ? 'true' : 'false');
+  }
+
+  var autoReconnectEl = $('autoReconnect');
+  var autoReconnect2El = $('autoReconnect2');
+  var autoStartEl = $('autoStart');
+  var minToTrayEl = $('minToTray');
+
+  function setAutoReconnect(on, fromRow) {
+    S.autoReconnect = on;
+    setSwitch(autoReconnectEl, on);
+    setSwitch(autoReconnect2El, on);
+    if (!on) {
+      showToast({
+        msg: '已关闭自动重连，断网后不会自动重试',
+        tone: 'info',
+        duration: 5000,
+        key: 'ar-off',
+        action: {
+          label: '撤销',
+          onClick: function () {
+            setAutoReconnect(true, true);
+            showToast({ msg: '已恢复自动重连', tone: 'success', duration: 2600, key: 'ar-on' });
+          }
+        }
+      });
+      if (S.phase === 'FAILED') {
+        clearTimers();
+        log('自动重连已关闭，已停止重试');
+        setPhase('IDLE');
+      }
+    } else if (!fromRow) {
+      log('已开启自动重连');
+    }
+  }
+
+  autoReconnectEl.addEventListener('click', function () { setAutoReconnect(!S.autoReconnect); });
+  autoReconnect2El.addEventListener('click', function () { setAutoReconnect(!S.autoReconnect); });
+
+  autoStartEl.addEventListener('click', function () {
+    S.autoStart = !S.autoStart;
+    setSwitch(autoStartEl, S.autoStart);
+    log(S.autoStart ? '已开启开机自动连接' : '已关闭开机自动连接');
+    showToast({ msg: '已保存', tone: 'success', duration: 2600, key: 'save' });
+  });
+
+  minToTrayEl.addEventListener('click', function () {
+    S.minToTray = !S.minToTray;
+    setSwitch(minToTrayEl, S.minToTray);
+    if (S.minToTray) {
+      showToast({
+        msg: '已最小化到托盘，认证将在后台继续',
+        tone: 'info',
+        duration: 4000,
+        key: 'tray'
+      });
+    } else {
+      showToast({ msg: '已保存', tone: 'success', duration: 2600, key: 'save' });
+    }
+  });
+
+  /* ==========================================================
+     检测间隔
+     ========================================================== */
+  var intervalInput = $('intervalInput');
+  var intervalHint = $('intervalHint');
+  var intervalHintTimer = null;
+  var INTERVAL_HINT = '取值范围 10–300 秒，保存后立即生效';
+
+  function flashHint(text) {
+    intervalHint.textContent = text;
+    intervalHint.style.color = 'var(--s-warn-ink)';
+    if (intervalHintTimer) clearTimeout(intervalHintTimer);
+    intervalHintTimer = setTimeout(function () {
+      intervalHint.textContent = INTERVAL_HINT;
+      intervalHint.style.color = '';
+    }, 3000);
+  }
+
+  function commitInterval() {
+    var raw = intervalInput.value.replace(/[^\d]/g, '');
+    var val = parseInt(raw, 10);
+    if (isNaN(val)) { intervalInput.value = String(S.interval); return; }
+    var clamped = clamp(val, 10, 300);
+    intervalInput.value = String(clamped);
+    if (clamped !== val) flashHint('已自动调整为 ' + clamped + ' 秒');
+    if (clamped !== S.interval) {
+      S.interval = clamped;
+      log('检测间隔已设为 ' + clamped + ' 秒');
+      if (S.phase === 'CONNECTED') startHeartbeat();
+      showToast({ msg: '已保存', tone: 'success', duration: 2600, key: 'save' });
+    }
+  }
+  intervalInput.addEventListener('blur', commitInterval);
+  intervalInput.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') { e.preventDefault(); intervalInput.blur(); }
+    if (e.key === 'Escape') { intervalInput.value = String(S.interval); intervalInput.blur(); }
+  });
+
+  /* 运行日志目录 / GitHub */
+  $('rowLogDir').addEventListener('click', function () {
+    showToast({ msg: '已在资源管理器中打开', tone: 'success', duration: 2600, key: 'logdir' });
+  });
+  $('rowGithub').addEventListener('click', function () {
+    showToast({ msg: '已复制 GitHub 地址', tone: 'success', duration: 2600, key: 'github' });
+  });
+
+  /* ==========================================================
+     主题
+     ========================================================== */
+  var themeSeg = $('themeSeg');
+  var themeBtns = all('.seg-item', themeSeg);
+  var systemDark = window.matchMedia('(prefers-color-scheme: dark)');
+  var themeAnimTimer = null;
+
+  function resolvedTheme() {
+    if (S.theme === 'system') return systemDark.matches ? 'dark' : 'light';
+    return S.theme;
+  }
+
+  function applyTheme(animate) {
+    var next = resolvedTheme();
+    var root = document.documentElement;
+    if (root.dataset.theme === next) return;
+    if (animate && !reduced) {
+      root.classList.add('theme-anim');
+      if (themeAnimTimer) clearTimeout(themeAnimTimer);
+      themeAnimTimer = setTimeout(function () { root.classList.remove('theme-anim'); }, 280);
+    }
+    root.dataset.theme = next;
+    var meta = el('meta[name="color-scheme"]');
+    if (meta) meta.setAttribute('content', next);
+  }
+
+  function setTheme(val, animate) {
+    S.theme = val;
+    var idx = ['light', 'dark', 'system'].indexOf(val);
+    themeSeg.style.setProperty('--i', String(idx));
+    themeBtns.forEach(function (b) {
+      var on = b.dataset.themeVal === val;
+      b.setAttribute('aria-checked', on ? 'true' : 'false');
+      b.setAttribute('tabindex', on ? '0' : '-1');
+    });
+    applyTheme(animate !== false);
+  }
+
+  themeBtns.forEach(function (b) {
+    b.addEventListener('click', function () { setTheme(b.dataset.themeVal, true); });
+  });
+
+  themeSeg.addEventListener('keydown', function (e) {
+    var idx = themeBtns.findIndex(function (b) { return b.getAttribute('aria-checked') === 'true'; });
+    var next = null;
+    if (e.key === 'ArrowRight') next = themeBtns[(idx + 1) % themeBtns.length];
+    if (e.key === 'ArrowLeft') next = themeBtns[(idx - 1 + themeBtns.length) % themeBtns.length];
+    if (next) {
+      e.preventDefault();
+      setTheme(next.dataset.themeVal, true);
+      next.focus();
+    }
+  });
+
+  systemDark.addEventListener('change', function () {
+    if (S.theme === 'system') applyTheme(true);
+  });
+
+  /* ==========================================================
+     Sheet：学校切换 —— ux §3.6 / R1
+     ========================================================== */
+  var sheet = $('schoolSheet');
+  var scrim = $('sheetScrim');
+  var sheetHandle = $('sheetHandle');
+  var sheetBody = $('sheetBody');
+  var confirmBar = $('switchConfirm');
+  var pendingSchool = null;
+  var sheetOpen = false;
+  var lastFocus = null;
+  var confirmTimer = null;
+  var drag = null;
+  var sidebarEl = el('.sidebar');
+  var tabbarEl = $('tabbar');
+
+  /* 玻璃冻结与 inert 在同一次状态更新里生效（视觉 §9.4 / ux §7.4） */
+  function freezeBackground(on) {
+    [sidebarEl, tabbarEl, scroller].forEach(function (n) {
+      if (!n) return;
+      if (on) n.setAttribute('inert', ''); else n.removeAttribute('inert');
+    });
+    [sidebarEl, tabbarEl].forEach(function (n) {
+      if (n) n.classList.toggle('glass-frozen', on);
+    });
+  }
+
+  function openSheet() {
+    if (sheetOpen) return;
+    lastFocus = document.activeElement;
+    sheetOpen = true;
+    sheet.hidden = false;
+    scrim.hidden = false;
+    sheet.classList.remove('closing', 'sheet-snap');
+    sheet.style.transform = '';
+    if (reduced) {
+      sheet.classList.remove('anim');
+      sheet.classList.add('open');
+      sheet.style.transform = 'translate(-50%,0)';
+    } else {
+      sheet.classList.add('anim');
+      requestAnimationFrame(function () {
+        sheet.classList.add('open');
+        sheet.style.transform = 'translate(-50%,0)';
+      });
+    }
+    requestAnimationFrame(function () { scrim.classList.add('show'); });
+    document.body.classList.add('sheet-open');
+    freezeBackground(true);
+    confirmBar.classList.remove('show');
+    pendingSchool = null;
+    setTimeout(function () {
+      var active = el('.sheet-row[aria-pressed="true"]', sheetBody) || el('.sheet-row', sheetBody);
+      if (active) active.focus({ preventScroll: true });
+    }, 60);
+  }
+
+  function closeSheet() {
+    if (!sheetOpen) return;
+    sheetOpen = false;
+    if (confirmTimer) { clearTimeout(confirmTimer); confirmTimer = null; }
+    confirmBar.classList.remove('show');
+    pendingSchool = null;
+    document.body.classList.remove('sheet-open');
+    freezeBackground(false);
+    scrim.classList.remove('show');
+    if (reduced) {
+      finishClose();
+      return;
+    }
+    sheet.classList.remove('open', 'anim', 'sheet-snap');
+    sheet.classList.add('closing');
+    sheet.style.transform = 'translate(-50%,100%)';
+    setTimeout(finishClose, 230);
+  }
+
+  function finishClose() {
+    sheet.hidden = true;
+    scrim.hidden = true;
+    sheet.classList.remove('closing');
+    sheet.style.transform = '';
+    restoreFocus(lastFocus);
+  }
+
+  function restoreFocus(node) {
+    if (node && document.contains(node)) node.focus({ preventScroll: true });
+  }
+
+  $('rowSwitchSchool').addEventListener('click', openSheet);
+  $('rowSchool').addEventListener('click', openSheet);
+  scrim.addEventListener('click', closeSheet);
+  $('cancelSwitch').addEventListener('click', function () {
+    confirmBar.classList.remove('show');
+    pendingSchool = null;
+    if (confirmTimer) { clearTimeout(confirmTimer); confirmTimer = null; }
+  });
+
+  function requestSchool(idx) {
+    if (idx === S.schoolIdx) { closeSheet(); return; }
+    if (S.phase === 'CONNECTED' || S.phase === 'CONNECTING') {
+      pendingSchool = idx;
+      confirmBar.classList.add('show');
+      $('confirmSwitch').focus({ preventScroll: true });
+      if (confirmTimer) clearTimeout(confirmTimer);
+      confirmTimer = setTimeout(function () {
+        confirmBar.classList.remove('show');
+        pendingSchool = null;
+        showToast({ msg: '已取消切换学校', tone: 'info', duration: 2600, key: 'switch-cancel' });
+      }, 30000);
+      return;
+    }
+    applySchool(idx);
+  }
+
+  function applySchool(idx, silent) {
+    var wasConnected = S.phase === 'CONNECTED' || S.phase === 'CONNECTING';
+    var prevIdx = S.schoolIdx;
+    var sc = SCHOOLS[idx];
+    S.schoolIdx = idx;
+
+    clearTimers();
+    S.retryCount = 0;
+    S.netFailCount = 0;
+    S.reconnectCount = 0;
+    S.sessionSec = 0;
+    S.ip = '—';
+    dgRetry.textContent = '0';
+    dgIp.textContent = '—';
+    dgSession.textContent = '—';
+    schoolEl.textContent = sc.name + ' · ' + sc.code;
+    $('meSchool').textContent = sc.name + ' · ' + sc.code;
+    $('meServer').textContent = sc.portal;
+    dgServer.textContent = sc.portal;
+    S.serverIp = sc.portal.split('/')[0];
+    S.lastConnect = null;
+
+    setPhase('IDLE');
+    subEl.textContent = subTextFor('IDLE');
+    log('已切换到 ' + sc.name);
+
+    all('.sheet-row', sheetBody).forEach(function (r) {
+      if (r.dataset.school === 'new') return;
+      var i = Number(r.dataset.school);
+      var on = i === idx;
+      r.setAttribute('aria-pressed', on ? 'true' : 'false');
+      var code = el('.sheet-row-code', r);
+      if (code) code.textContent = SCHOOLS[i].code + (on ? ' · 当前' : '');
+    });
+
+    closeSheet();
+    if (silent) return;
+
+    setTimeout(function () {
+      showToast({
+        msg: '已切换到 ' + sc.name,
+        tone: 'success',
+        duration: wasConnected ? 5000 : 2600,
+        key: 'switch',
+        action: wasConnected ? {
+          label: '撤销',
+          onClick: function () {
+            applySchool(prevIdx, true);
+            showToast({
+              msg: '已切换回 ' + SCHOOLS[prevIdx].name,
+              tone: 'success',
+              duration: 2600,
+              key: 'switch-back'
+            });
+          }
+        } : null
+      });
+    }, wasConnected ? 320 : 0);
+  }
+
+  $('confirmSwitch').addEventListener('click', function () {
+    if (confirmTimer) { clearTimeout(confirmTimer); confirmTimer = null; }
+    var idx = pendingSchool;
+    pendingSchool = null;
+    confirmBar.classList.remove('show');
+    if (idx !== null) applySchool(idx);
+  });
+
+  all('.sheet-row', sheetBody).forEach(function (r) {
+    r.addEventListener('click', function () {
+      if (r.dataset.school === 'new') {
+        showToast({ msg: '新增配置需要填写 Portal 地址与账号', tone: 'info', duration: 4000, key: 'new-school' });
+        return;
+      }
+      requestSchool(Number(r.dataset.school));
+    });
+  });
+
+  /* Sheet 手势 */
+  function sheetTranslateY() {
+    var m = /translate\(-50%,\s*(-?[\d.]+)px\)/.exec(sheet.style.transform || '');
+    return m ? parseFloat(m[1]) : 0;
+  }
+
+  function dampen(over) {
+    return Math.min(96, (over * 0.35) / (1 + over / 240));
+  }
+
+  function onPointerDown(e) {
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
+    if (e.target.closest('button, input')) return;
+    if (!sheetHandle.contains(e.target) && sheetBody.scrollTop > 0) return;
+    drag = {
+      id: e.pointerId,
+      startY: e.clientY,
+      startX: e.clientX,
+      active: false,
+      samples: [],
+      limit: sheet.offsetHeight * 0.3
+    };
+    sheet.setPointerCapture(e.pointerId);
+  }
+
+  function onPointerMove(e) {
+    if (!drag || e.pointerId !== drag.id) return;
+    var dy = e.clientY - drag.startY;
+    var dx = e.clientX - drag.startX;
+    if (!drag.active) {
+      if (Math.abs(dy) < 12) return;
+      if (Math.abs(dx) > Math.abs(dy)) { drag = null; return; }
+      drag.active = true;
+      sheet.classList.remove('anim', 'closing');
+      sheet.style.transition = 'none';
+    }
+    var offset;
+    if (dy <= 0) offset = 0;
+    else if (dy <= drag.limit) offset = dy;
+    else offset = drag.limit + dampen(dy - drag.limit);
+    sheet.style.transform = 'translate(-50%,' + offset.toFixed(1) + 'px)';
+    drag.samples.push({ t: performance.now(), y: dy });
+    if (drag.samples.length > 8) drag.samples.shift();
+  }
+
+  function onPointerUp(e) {
+    if (!drag || e.pointerId !== drag.id) return;
+    var d = drag;
+    drag = null;
+    sheet.style.transition = '';
+    if (!d.active) return;
+
+    var moved = sheetTranslateY();
+    var h = sheet.offsetHeight;
+    var threshold = Math.max(120, h * 0.25);
+    var velocity = 0;
+    if (d.samples.length >= 2) {
+      var last = d.samples[d.samples.length - 1];
+      var first = d.samples[0];
+      var dt = last.t - first.t;
+      if (dt > 0) velocity = (last.y - first.y) / dt;
+    }
+
+    if (moved >= threshold || velocity >= 0.8) {
+      closeSheet();
+      return;
+    }
+    sheet.classList.add('sheet-snap');
+    sheet.style.transform = 'translate(-50%,0)';
+    setTimeout(function () { sheet.classList.remove('sheet-snap'); }, 240);
+  }
+
+  sheet.addEventListener('pointerdown', onPointerDown);
+  sheet.addEventListener('pointermove', onPointerMove);
+  sheet.addEventListener('pointerup', onPointerUp);
+  sheet.addEventListener('pointercancel', onPointerUp);
+
+  /* Sheet 焦点陷阱 */
+  sheet.addEventListener('keydown', function (e) {
+    if (e.key !== 'Tab') return;
+    var items = all('button, input, [tabindex]:not([tabindex="-1"])', sheet)
+      .filter(function (n) { return n.offsetParent !== null; });
+    if (!items.length) return;
+    var first = items[0];
+    var last = items[items.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  });
+
+  /* ==========================================================
+     演示控件
+     ========================================================== */
+  var demoChips = $('demoChips');
+  var demoGroup = $('demoGroup');
+  var demoDisc = $('demoDisc');
+  var demoDiscValue = $('demoDiscValue');
+
+  function syncDemoChips() {
+    all('[data-force]', demoChips).forEach(function (b) {
+      b.setAttribute('aria-pressed', b.dataset.force === S.phase ? 'true' : 'false');
+    });
+    demoDiscValue.textContent = metaFor(S.phase).title;
+  }
+
+  /* M1：<768 收起为一行 disclosure；桌面该按钮 display:none，不参与布局 */
+  demoDisc.addEventListener('click', function () {
+    var open = demoDisc.getAttribute('aria-expanded') === 'true';
+    demoDisc.setAttribute('aria-expanded', open ? 'false' : 'true');
+    demoGroup.classList.toggle('is-open', !open);
+  });
+
+  function forceState(target) {
+    T.demo.forEach(clearTimeout);
+    T.demo = [];
+    if (target === 'IDLE') {
+      clearTimers();
+      S.lastConnect = '今天 08:12';
+      setPhase('IDLE');
+      subEl.textContent = '上次连接 今天 08:12';
+    } else if (target === 'CONNECTING') {
+      enterConnecting(false);
+    } else if (target === 'CONNECTED') {
+      S.connectStarted = performance.now() - 1200;
+      succeed();
+    } else if (target === 'FAILED') {
+      clearTimers();
+      S.retryCount = 3;
+      S.netFailCount = 0;
+      S.failKind = 'credential';
+      setPhase('FAILED');
+      subEl.textContent = subTextFor('FAILED');
+      log('认证失败 · 演示');
+      startCountdown(3);
+    } else if (target === 'PAUSED') {
+      S.retryCount = MAX_FAIL;
+      enterPaused('retry', false);
+    }
+  }
+
+  all('[data-force]', demoChips).forEach(function (b) {
+    b.addEventListener('click', function () { forceState(b.dataset.force); });
+  });
+
+  function demoFail(kind, retrySeed, netSeed) {
+    T.demo.forEach(clearTimeout);
+    T.demo = [];
+    S.retryCount = retrySeed;
+    S.netFailCount = netSeed;
+    fail(kind);
+  }
+
+  $('demoKindCred').addEventListener('click', function () { demoFail('credential', 2, 0); });
+  $('demoKindSvc').addEventListener('click', function () { demoFail('portal_service', 1, 0); });
+  $('demoKindNet').addEventListener('click', function () { demoFail('network', 0, 1); });
+
+  $('demoPausedRetry').addEventListener('click', function () {
+    T.demo.forEach(clearTimeout);
+    T.demo = [];
+    S.retryCount = 0;
+    S.netFailCount = 0;
+    var chain = ['credential', 'portal_service', 'credential', 'network', 'credential'];
+    function step(i) {
+      if (i >= chain.length || S.phase === 'PAUSED') return;
+      fail(chain[i]);
+      T.demo.push(setTimeout(function () { step(i + 1); }, 700));
+    }
+    step(0);
+  });
+
+  $('demoPausedLocked').addEventListener('click', function () { enterPaused('locked', true); });
+  $('demoPausedArrears').addEventListener('click', function () { enterPaused('arrears', true); });
+
+  $('demoNetDown').addEventListener('click', function () {
+    if (S.phase !== 'CONNECTED') {
+      showToast({ msg: '仅已连接状态下可模拟断网', tone: 'info', duration: 2600, key: 'netdown' });
+      return;
+    }
+    S.netDown = true;
+    heartbeatCheck();
+  });
+
+  $('refreshBtn').addEventListener('click', function () {
+    log('手动刷新状态');
+    if (heartbeatCheck()) return;
+    showToast({ msg: S.phase === 'CONNECTED' ? '心跳探测正常' : '已刷新', tone: 'success', duration: 2600, key: 'ping' });
+  });
+
+  /* ==========================================================
+     键盘
+     ========================================================== */
+  document.addEventListener('keydown', function (e) {
+    if (e.ctrlKey && !e.altKey && !e.metaKey) {
+      if (e.key === '1') { e.preventDefault(); go('home'); return; }
+      if (e.key === '2') { e.preventDefault(); go('me'); return; }
+      if (e.key === '3') { e.preventDefault(); go('settings'); return; }
+      if (e.key === ',') { e.preventDefault(); go('settings'); return; }
+    }
+    if (e.key === 'Escape') {
+      if (sheetOpen) { e.preventDefault(); closeSheet(); return; }
+      if (!logPageEl.hidden) { e.preventDefault(); closeLogPage(); return; }
+    }
+  });
+
+  /* ==========================================================
+     下拉刷新（仅触屏）—— ux §4.2
+     ========================================================== */
+  var ptr = null;
+  var ptrIndicator = document.createElement('div');
+  ptrIndicator.style.cssText = [
+    'position:absolute', 'left:50%', 'top:8px', 'width:24px', 'height:24px',
+    'margin-left:-12px', 'border-radius:50%', 'pointer-events:none',
+    'border:2px solid var(--c-sep-strong)', 'border-top-color:var(--a-text)',
+    'opacity:0', 'transition:opacity 160ms var(--ease-state)'
+  ].join(';');
+  el('.home-col', $('page-home')).style.position = 'relative';
+  el('.home-col', $('page-home')).appendChild(ptrIndicator);
+
+  scroller.addEventListener('touchstart', function (e) {
+    if (currentPage !== 'home') { ptr = null; return; }
+    if (scroller.scrollTop > 0) { ptr = null; return; }
+    if (S.phase === 'CONNECTING') { ptr = null; return; }
+    var t = e.touches[0];
+    ptr = { y0: t.clientY, active: false, offset: 0 };
+  }, { passive: true });
+
+  scroller.addEventListener('touchmove', function (e) {
+    if (!ptr) return;
+    var t = e.touches[0];
+    var dy = t.clientY - ptr.y0;
+    if (dy <= 0) { ptr.offset = 0; return; }
+    var over = dy * 0.55;
+    ptr.active = over > 4;
+    ptr.offset = Math.min(over, 96);
+    ptrIndicator.style.opacity = String(clamp(ptr.offset / 72, 0, 1));
+    ptrIndicator.style.transform = 'translateY(' + (ptr.offset * 0.35) + 'px)';
+  }, { passive: true });
+
+  scroller.addEventListener('touchend', function () {
+    if (!ptr) return;
+    var fired = ptr.offset >= 72;
+    var wasActive = ptr.active;
+    ptr = null;
+    ptrIndicator.style.opacity = '0';
+    ptrIndicator.style.transform = 'translateY(0)';
+    if (!fired || !wasActive) return;
+    log('下拉刷新 · 执行一次心跳检测');
+    setTimeout(function () {
+      if (!heartbeatCheck() && S.phase === 'CONNECTED') {
+        showToast({ msg: '心跳探测正常', tone: 'success', duration: 2600, key: 'ping' });
+      }
+    }, 600);
+  }, { passive: true });
+
+  /* ==========================================================
+     冷启动时序 —— ux §2.1
+     ========================================================== */
+  function boot() {
+    var sc = SCHOOLS[S.schoolIdx];
+    var cards = [
+      $('statusCard'),
+      el('.dg', PAGES.home),
+      el('.home-col > .card', PAGES.home),
+      el('.logcard', PAGES.home)
+    ].filter(Boolean);
+
+    armSkeleton();
+    hasEntered.home = true;
+
+    /* 120–200：状态卡入场（骨架永不出现于状态卡） */
+    setTimeout(function () { enterAnim(cards[0], 0, 12); }, 120);
+
+    /* 190：读配置落定（≤200ms，按双阈值不显示骨架）—— 学校名与副行 cross-fade，其余卡片 stagger 入场 */
+    setTimeout(function () {
+      disarmSkeleton();
+      schoolEl.textContent = sc.name + ' · ' + sc.code;
+      setSub(subTextFor('IDLE'), true);
+      cards.slice(1).forEach(function (c, i) { enterAnim(c, i * 40, 12); });
+    }, 190);
+
+    /* 260：IDLE → CONNECTING */
+    setTimeout(function () {
+      S.retryCount = 0;
+      S.netFailCount = 0;
+      enterConnecting(false, false);
+    }, 260);
+  }
+
+  /* ==========================================================
+     初始化
+     ========================================================== */
+  function init() {
+    S.logs = [
+      { t: '10:21:03', m: '认证成功 · 耗时 1.2s' },
+      { t: '10:20:58', m: '第 1 次重连成功 · 已获取 IP' },
+      { t: '10:20:57', m: '检测到断网，开始重连' },
+      { t: '10:18:32', m: '心跳探测失败，等待重试' },
+      { t: '10:14:06', m: '守护启动 · SSID YYKJXY-Student' }
+    ];
+
+    setSwitch(autoReconnectEl, S.autoReconnect);
+    setSwitch(autoReconnect2El, S.autoReconnect);
+    setSwitch(autoStartEl, S.autoStart);
+    setSwitch(minToTrayEl, S.minToTray);
+
+    applyTheme(false);
+    setTheme('system', false);
+
+    ringTime.textContent = fmtHMS(S.sessionSec);
+    dgSession.textContent = fmtHMS(S.sessionSec);
+    dgIp.textContent = S.ip;
+    dgServer.textContent = SCHOOLS[0].portal;
+    dgRetry.textContent = String(S.reconnectCount);
+
+    subEl.textContent = '正在读取配置…';
+    applyPhase('IDLE', '');
+    subEl.textContent = '正在读取配置…';
+    renderHomeLog(0);
+    renderLogView();
+    go('home', true);
+
+    mqCompact.addEventListener('change', function () {
+      all('.lt').forEach(function (n) { n.style.opacity = ''; n.style.transform = ''; });
+      updateTopbarTitle(scroller.scrollTop);
+      el('#openLogLabel').textContent = mqCompact.matches ? '查看全部' : '查看完整日志';
+      renderHomeLog(0);
+    });
+    el('#openLogLabel').textContent = mqCompact.matches ? '查看全部' : '查看完整日志';
+
+    mqReduced.addEventListener('change', function () {
+      reduced = mqReduced.matches;
+      ringSvg.classList.toggle('spin', S.phase === 'CONNECTING' && !reduced);
+      renderCountdown();
+    });
+
+    window.addEventListener('resize', function () { onScroll(); });
+    document.addEventListener('visibilitychange', function () {
+      document.documentElement.classList.toggle('is-hidden', document.hidden);
+    });
+    requestAnimationFrame(frameWatch);
+
+    requestAnimationFrame(function () { requestAnimationFrame(boot); });
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>
