@@ -53,29 +53,19 @@ jobs:
 
       - name: 发布 Release
         if: startsWith(github.ref, 'refs/tags/')
-        uses: softprops/action-gh-release@v2
-        with:
-          name: 懒得连校园网 ${{ github.ref_name }}
-          files: ui-ios/dist/*.exe
-          fail_on_unmatched_files: true
-          body: |
-            ## 下载
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $tag = $env:GITHUB_REF_NAME
+          $exe = (Get-ChildItem "ui-ios/dist/*.exe" | Select-Object -First 1).FullName
+          "上传：$exe"
 
-            `懒得连校园网.exe` —— 单文件绿色版，双击即用，无需安装、无需 Python 环境。
+          # 先传附件（--clobber 允许覆盖同名），再修正标题与说明
+          gh release upload $tag $exe --clobber
+          gh release edit $tag --title "懒得连校园网 $tag" --notes-file .github/release-notes.md
 
-            ## 这一版有什么
+          # 清掉历史遗留的错误命名附件（首次运行不存在，忽略即可）
+          gh release delete-asset $tag "default.exe" -y 2>$null
+          if ($LASTEXITCODE -ne 0) { "无需清理 default.exe" }
 
-            - **全新的 iOS 风格界面**：主页 / 我的 / 设置三页，毛玻璃状态卡、单列移动布局
-            - **手机竖屏窗口**：默认 420×860 屏幕居中，屏幕矮时自动收高
-            - **托盘常驻**：关掉窗口程序仍在右下角托盘，右键可显示主界面 / 退出
-            - **单实例**：已在运行时不重复开窗，只会把原窗口调到前台
-            - **真实状态机**：五态（未连接 / 连接中 / 已连接 / 认证失败 / 已暂停）、
-              分段重试倒计时、失败分账（凭据 / 服务 / 网络）
-            - **保留原程序全部能力**：多学校配置、学号密码本地加密存储、检测间隔、
-              开机自启、最小化到托盘、主题三档、运行日志
-
-            ## 说明
-
-            - 界面层是本地状态机演示；接真实 Portal 认证需把 `eportal.py` 的结果回调接到 `settle()`，UI 层不用动
-            - 检测间隔下限为 10 秒（更短会触发 Portal 限流甚至锁号）
-            - 源码与设计规范见 `ui-ios/` 目录
+          gh release view $tag --json assets --jq '.assets[] | "\(.name)  \(.size) bytes"'
