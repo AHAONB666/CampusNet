@@ -38,10 +38,13 @@ jobs:
             --add-data "app.ico;." `
             app.py
 
-      - name: 重命名为应用名
+      - name: 归档为可发布的文件名
         run: |
-          Move-Item -LiteralPath "ui-ios/dist/CampusNetIOS.exe" `
-                    -Destination "ui-ios/dist/懒得连校园网.exe" -Force
+          $tag = if ($env:GITHUB_REF_NAME) { $env:GITHUB_REF_NAME } else { "dev" }
+          $assetName = "CampusNet-$tag-win64.exe"
+          # 归档名用纯 ASCII：中文文件名在 Release 上传链路上会失败
+          Copy-Item -LiteralPath "ui-ios/dist/CampusNetIOS.exe" `
+                    -Destination "ui-ios/dist/$assetName" -Force
           Get-ChildItem "ui-ios/dist" | Format-Table Name, Length
 
       - name: 上传构建产物
@@ -58,10 +61,6 @@ jobs:
         run: |
           $tag = $env:GITHUB_REF_NAME
           $assetName = "CampusNet-$tag-win64.exe"
-
-          # 归档名用纯 ASCII：中文文件名在 API 上传链路上不可靠
-          Copy-Item "ui-ios/dist/CampusNetIOS.exe" "ui-ios/dist/$assetName" -Force
-          Get-ChildItem "ui-ios/dist" | Format-Table Name, Length
 
           # 先清历史遗留的错误命名附件（首次不存在，忽略错误）
           gh release delete-asset $tag "default.exe" -y 2>$null
