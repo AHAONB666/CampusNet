@@ -57,15 +57,18 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           $tag = $env:GITHUB_REF_NAME
-          $exe = (Get-ChildItem "ui-ios/dist/*.exe" | Select-Object -First 1).FullName
-          "上传：$exe"
+          $assetName = "CampusNet-$tag-win64.exe"
 
-          # 先传附件（--clobber 允许覆盖同名），再修正标题与说明
-          gh release upload $tag $exe --clobber
-          gh release edit $tag --title "懒得连校园网 $tag" --notes-file .github/release-notes.md
+          # 归档名用纯 ASCII：中文文件名在 API 上传链路上不可靠
+          Copy-Item "ui-ios/dist/CampusNetIOS.exe" "ui-ios/dist/$assetName" -Force
+          Get-ChildItem "ui-ios/dist" | Format-Table Name, Length
 
-          # 清掉历史遗留的错误命名附件（首次运行不存在，忽略即可）
+          # 先清历史遗留的错误命名附件（首次不存在，忽略错误）
           gh release delete-asset $tag "default.exe" -y 2>$null
           if ($LASTEXITCODE -ne 0) { "无需清理 default.exe" }
 
+          gh release upload $tag "ui-ios/dist/$assetName" --clobber
+          gh release edit $tag --title "懒得连校园网 $tag" --notes-file .github/release-notes.md
+
+          "---- 最终附件 ----"
           gh release view $tag --json assets --jq '.assets[] | "\(.name)  \(.size) bytes"'
